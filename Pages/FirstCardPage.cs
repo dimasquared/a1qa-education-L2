@@ -1,7 +1,7 @@
 ﻿using Aquality.Selenium.Forms;
 using OpenQA.Selenium;
 
-namespace Task2Stage2.Page;
+namespace Task2Stage2.Pages;
 
 public class FirstCardPage : Form
 {

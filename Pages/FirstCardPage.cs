@@ -30,19 +30,19 @@ public class FirstCardPage : Form
     {
     }
 
-    public void InputPassword()
+    public void InputPassword(string password)
     {
-        PasswordTextBox.ClearAndType("Яqwerty12345");
+        PasswordTextBox.ClearAndType(password);
     }
 
-    public void InputEmail()
+    public void InputEmail(string email)
     {
-        EmailTextBox.ClearAndType("qwerty");
+        EmailTextBox.ClearAndType(email);
     }
 
-    public void InputEmailDomain()
+    public void InputEmailDomain(string emailDomain)
     {
-        EmailDomainTextBox.ClearAndType("qwerty");
+        EmailDomainTextBox.ClearAndType(emailDomain);
     }
     
     public void ChooseEmailDomainZone()

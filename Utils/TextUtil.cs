@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Task2Stage2.Resources;
+namespace Task2Stage2.Utils;
 
 public class TextUtil
 {

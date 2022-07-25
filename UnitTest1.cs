@@ -1,6 +1,6 @@
 using Aquality.Selenium.Browsers;
 using Task2Stage2.Pages;
-using Task2Stage2.Resources;
+using Task2Stage2.Utils;
 
 namespace Task2Stage2;
 
@@ -39,7 +39,22 @@ public class Tests
 
         secondCardPage.UploadImage();
         secondCardPage.UnselectAllInterestsCheckBoxClick();
-        secondCardPage.CheckInterests();
+
+        var checkedInterestsList = new List<int>();
+
+        do
+        {
+            var index = new Random().Next(secondCardPage.Interests.Count);
+            if (!checkedInterestsList.Contains(index))
+            {
+                var interestName = secondCardPage.GetInterestName(index);
+                if (interestName != "interest_selectall" && interestName != "interest_unselectall")
+                {
+                    secondCardPage.CheckInterest(index);
+                    checkedInterestsList.Add(index);
+                }
+            }
+        } while (checkedInterestsList.Count < 3);
 
         secondCardPage.ClickNextButton();
         var thirdCardPage = new ThirdCardPage();
@@ -49,6 +64,15 @@ public class Tests
     [Test, Order(2)]
     public void TestCase2()
     {
+        AqualityServices.Browser.GoTo("https://userinyerface.com/");
+        AqualityServices.Browser.Maximize();
+        var welcomePage = new WelcomePage();
+        Assert.IsTrue(welcomePage.State.WaitForDisplayed(), "Welcome Page is not opened");
+        
+        welcomePage.ClickHereButton();
+        var helpForm = new HelpForm();
+        helpForm.HideHelpForm();
+        Assert.IsFalse(helpForm.State.WaitForDisplayed(), "Help Form is not hidden");
     }
 
     [TearDown]

@@ -40,21 +40,19 @@ public class Tests
         secondCardPage.UploadImage();
         secondCardPage.UnselectAllInterestsCheckBoxClick();
 
-        var checkedInterestsList = new List<int>();
+        var countCheckedInterests = 0;
+        NumberRangeUtil indexRange = new NumberRangeUtil(0, secondCardPage.Interests.Count);
 
         do
         {
-            var index = new Random().Next(secondCardPage.Interests.Count);
-            if (!checkedInterestsList.Contains(index))
+            var index = indexRange.GetNextNotRepeatRandomNumber();
+            var interestName = secondCardPage.GetInterestName(index);
+            if (interestName != "interest_selectall" && interestName != "interest_unselectall")
             {
-                var interestName = secondCardPage.GetInterestName(index);
-                if (interestName != "interest_selectall" && interestName != "interest_unselectall")
-                {
-                    secondCardPage.CheckInterest(index);
-                    checkedInterestsList.Add(index);
-                }
+                secondCardPage.CheckInterest(index);
+                countCheckedInterests++;
             }
-        } while (checkedInterestsList.Count < 3);
+        } while (countCheckedInterests < 3);
 
         secondCardPage.ClickNextButton();
         var thirdCardPage = new ThirdCardPage();
@@ -68,7 +66,7 @@ public class Tests
         AqualityServices.Browser.Maximize();
         var welcomePage = new WelcomePage();
         Assert.IsTrue(welcomePage.State.WaitForDisplayed(), "Welcome Page is not opened");
-        
+
         welcomePage.ClickHereButton();
         var helpForm = new FirstCardPage.HelpForm();
         helpForm.HideHelpForm();
@@ -82,7 +80,7 @@ public class Tests
         AqualityServices.Browser.Maximize();
         var welcomePage = new WelcomePage();
         Assert.IsTrue(welcomePage.State.WaitForDisplayed(), "Welcome Page is not opened");
-        
+
         welcomePage.ClickHereButton();
         var firstCardPage = new FirstCardPage();
         firstCardPage.ClickAcceptCookiesButton();
@@ -96,12 +94,12 @@ public class Tests
         AqualityServices.Browser.Maximize();
         var welcomePage = new WelcomePage();
         Assert.IsTrue(welcomePage.State.WaitForDisplayed(), "Welcome Page is not opened");
-        
+
         welcomePage.ClickHereButton();
         var firstCardPage = new FirstCardPage();
-        Assert.AreEqual("00:00:00", firstCardPage.GetTimerValue());
+        Assert.AreEqual("00:00:00", firstCardPage.GetTimerValue(), "Timer does not start from 00:00:00");
     }
-    
+
     [TearDown]
     public void CleanUp()
     {

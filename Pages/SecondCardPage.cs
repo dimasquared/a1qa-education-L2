@@ -10,10 +10,10 @@ namespace Task2Stage2.Pages;
 public class SecondCardPage : Form
 {
     private IButton UploadImageButton =>
-        ElementFactory.GetButton(By.XPath("//a[@class = 'avatar-and-interests__upload-button']"), "UploadImageButton");
+        ElementFactory.GetButton(By.XPath("//a[@class = 'avatar-and-interests__upload-button']"), "Upload Image Button");
 
     private IButton UnselectAllInterestsCheckBox =>
-        ElementFactory.GetButton(By.XPath("//label[@for = 'interest_unselectall']"), "UnselectAllInterestsCheckBox");
+        ElementFactory.GetButton(By.XPath("//label[@for = 'interest_unselectall']"), "UnselectAllInterests CheckBox");
 
     public IList<IButton> Interests =>
         ElementFactory.FindElements<IButton>(By.XPath("//label[contains(@for, 'interest_')]")).ToList();

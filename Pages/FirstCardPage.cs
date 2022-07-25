@@ -19,6 +19,10 @@ public class FirstCardPage : Form
         ElementFactory.GetButton(By.XPath("//span[@class = 'checkbox']"), "Accept Terms & Conditions CheckBox");
     private IButton NextButton => ElementFactory.GetButton(By.XPath("//a[@class = 'button--secondary']"), "Next");
 
+    private IButton AcceptCookiesButton =>
+        ElementFactory.GetButton(By.XPath("//div[@class = 'cookies']//button[text() = 'Not really, no']"),
+            "Accept Cookies Button");
+
     public FirstCardPage() : base(By.XPath("//a[@class = 'login-form__terms-conditions']"), "First Card Page")
     {
     }
@@ -52,5 +56,15 @@ public class FirstCardPage : Form
     public void ClickNextButton()
     {
         NextButton.ClickAndWait();
+    }
+
+    public void ClickAcceptCookiesButton()
+    {
+        AcceptCookiesButton.Click();
+    }
+
+    public bool CheckCookiesIsDisplayed()
+    {
+        return AcceptCookiesButton.State.IsDisplayed;
     }
 }

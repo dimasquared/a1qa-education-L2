@@ -10,7 +10,7 @@ public class WelcomePage : Form
     {
     }
     
-    public IButton HereButton => ElementFactory.GetButton(By.XPath("//a[@class = 'start__link']"), "HERE");
+    public IButton HereButton => ElementFactory.GetButton(By.XPath("//a[@class = 'start__link']"), "HERE Button");
     
     public void ClickHereButton()
     {

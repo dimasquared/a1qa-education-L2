@@ -75,6 +75,20 @@ public class Tests
         Assert.IsFalse(helpForm.State.WaitForDisplayed(), "Help Form is not hidden");
     }
 
+    [Test, Order(3)]
+    public void TestCase3()
+    {
+        AqualityServices.Browser.GoTo("https://userinyerface.com/");
+        AqualityServices.Browser.Maximize();
+        var welcomePage = new WelcomePage();
+        Assert.IsTrue(welcomePage.State.WaitForDisplayed(), "Welcome Page is not opened");
+        
+        welcomePage.ClickHereButton();
+        var firstCardPage = new FirstCardPage();
+        firstCardPage.ClickAcceptCookiesButton();
+        Assert.IsFalse(firstCardPage.CheckCookiesIsDisplayed(), "Cookies is displayed");
+    }
+    
     [TearDown]
     public void CleanUp()
     {

@@ -27,4 +27,11 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Resources\settings.json" />
+      <EmbeddedResource Include="Resources\settings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+
 </Project>

@@ -31,6 +31,7 @@ public class SecondCardPage : Form
         var imagePath = Environment.CurrentDirectory + @"\Resources\DcJwlj4XcAIqUSY.jpg";
         InputSimulator simulator = new InputSimulator();
         simulator.Keyboard.TextEntry(@imagePath);
+        Thread.Sleep(500);
         simulator.Keyboard.KeyPress(VirtualKeyCode.RETURN);
     }
 

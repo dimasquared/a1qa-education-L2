@@ -1,9 +1,7 @@
-﻿using Aquality.Selenium.Core.Elements;
-using Aquality.Selenium.Elements.Interfaces;
+﻿using Aquality.Selenium.Elements.Interfaces;
 using Aquality.Selenium.Forms;
 using OpenQA.Selenium;
 using Task2Stage2.Elements;
-using IElement = Aquality.Selenium.Core.Elements.Interfaces.IElement;
 
 namespace Task2Stage2.Pages;
 
@@ -72,7 +70,7 @@ public class FirstCardPage : Form
 
     public void ClickAcceptCookiesButton()
     {
-        AcceptCookiesButton.Click();
+        AcceptCookiesButton.WaitAndClick();
     }
 
     public bool CheckCookiesIsDisplayed()

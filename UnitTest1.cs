@@ -1,4 +1,6 @@
 using Aquality.Selenium.Browsers;
+using Aquality.Selenium.Core.Configurations;
+using Aquality.Selenium.Core.Utilities;
 using Task2Stage2.Pages;
 using Task2Stage2.Utils;
 
@@ -6,15 +8,19 @@ namespace Task2Stage2;
 
 public class Tests
 {
+    private String url;
+    
     [SetUp]
     public void Setup()
     {
+        ISettingsFile config = new JsonSettingsFile(Environment.CurrentDirectory + @"\Resources\config.json");
+        url = config.GetValue<String>("url");
     }
 
     [Test, Order(1)]
     public void TestCase1()
     {
-        AqualityServices.Browser.GoTo("https://userinyerface.com/");
+        AqualityServices.Browser.GoTo(url);
         AqualityServices.Browser.Maximize();
         var welcomePage = new WelcomePage();
         Assert.IsTrue(welcomePage.State.WaitForDisplayed(), "Welcome Page is not opened");
@@ -62,7 +68,7 @@ public class Tests
     [Test, Order(2)]
     public void TestCase2()
     {
-        AqualityServices.Browser.GoTo("https://userinyerface.com/");
+        AqualityServices.Browser.GoTo(url);
         AqualityServices.Browser.Maximize();
         var welcomePage = new WelcomePage();
         Assert.IsTrue(welcomePage.State.WaitForDisplayed(), "Welcome Page is not opened");
@@ -76,7 +82,7 @@ public class Tests
     [Test, Order(3)]
     public void TestCase3()
     {
-        AqualityServices.Browser.GoTo("https://userinyerface.com/");
+        AqualityServices.Browser.GoTo(url);
         AqualityServices.Browser.Maximize();
         var welcomePage = new WelcomePage();
         Assert.IsTrue(welcomePage.State.WaitForDisplayed(), "Welcome Page is not opened");
@@ -90,7 +96,7 @@ public class Tests
     [Test, Order(4)]
     public void TestCase4()
     {
-        AqualityServices.Browser.GoTo("https://userinyerface.com/");
+        AqualityServices.Browser.GoTo(url);
         AqualityServices.Browser.Maximize();
         var welcomePage = new WelcomePage();
         Assert.IsTrue(welcomePage.State.WaitForDisplayed(), "Welcome Page is not opened");

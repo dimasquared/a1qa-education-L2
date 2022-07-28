@@ -2,23 +2,14 @@
 
 public class NumberRangeUtil
 {
-    private readonly Random random = new Random();
-    private readonly List<int> lastTakeNumbers = new List<int>();
-    private readonly int from;
-    private readonly int to;
+    private static Random random = new Random();
 
-    public NumberRangeUtil(int from, int to)
-    {
-        this.to = to;
-        this.from = from;
-    }
-
-    public int GetNextNotRepeatRandomNumber()
+    public static int GetNextNotRepeatRandomNumber(int from, int to, List<int> lastTakeNumbers)
     {
         int randomNumber;
         do
         {
-            randomNumber = random.Next(from, to + 1);
+            randomNumber = random.Next(from, to);
         } while (lastTakeNumbers.Contains(randomNumber));
 
         lastTakeNumbers.Add(randomNumber);

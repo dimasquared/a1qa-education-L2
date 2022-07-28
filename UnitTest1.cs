@@ -8,17 +8,24 @@ namespace Task2Stage2;
 
 public class Tests
 {
-    private String url;
+    private string url;
+    private string timerStartTime;
+    private int requiredNumberOfInterests;
+    private string imagePath;
     
     [SetUp]
     public void Setup()
     {
         ISettingsFile config = new JsonSettingsFile(Environment.CurrentDirectory + @"\Resources\config.json");
-        url = config.GetValue<String>("url");
+        url = config.GetValue<string>("url");
+        ISettingsFile testData = new JsonSettingsFile(Environment.CurrentDirectory + @"\Resources\testData.json");
+        timerStartTime = testData.GetValue<string>("timerStartTime");
+        requiredNumberOfInterests = testData.GetValue<int>("requiredNumberOfInterests");
+        imagePath = testData.GetValue<string>("imagePath");
     }
 
     [Test, Order(1)]
-    public void TestCase1()
+    public void RegistrationTest()
     {
         AqualityServices.Browser.GoTo(url);
         AqualityServices.Browser.Maximize();
@@ -26,47 +33,48 @@ public class Tests
         Assert.IsTrue(welcomePage.State.WaitForDisplayed(), "Welcome Page is not opened");
 
         welcomePage.ClickHereButton();
-        var firstCardPage = new FirstCardPage();
-        Assert.IsTrue(firstCardPage.State.WaitForDisplayed(), "First Card Page is not opened");
+        var firstCardPage = new LoginFormPage();
+        Assert.IsTrue(firstCardPage.State.WaitForDisplayed(), "Login Form Page is not opened");
 
-        string email = TextUtil.RandomText('a', 'z', 5);
+        var email = TextUtil.RandomText('a', 'z', 5);
         firstCardPage.InputEmail(email);
-        string password = email + TextUtil.RandomText('A', 'Z', 1) + TextUtil.RandomText('А', 'я', 3) +
+        var password = email + TextUtil.RandomText('A', 'Z', 1) + TextUtil.RandomText('А', 'я', 3) +
                           TextUtil.RandomText('1', '2', 5);
         firstCardPage.InputPassword(password);
-        string emailDomain = TextUtil.RandomText('a', 'z', 5);
+        var emailDomain = TextUtil.RandomText('a', 'z', 5);
         firstCardPage.InputEmailDomain(emailDomain);
         firstCardPage.ChooseEmailDomainZone();
         firstCardPage.UncheckAcceptTermsConditionsCheckBox();
 
         firstCardPage.ClickNextButton();
-        var secondCardPage = new SecondCardPage();
-        Assert.IsTrue(secondCardPage.State.WaitForDisplayed(), "Second Card Page is not opened");
+        var secondCardPage = new AvatarАndInterestsPage();
+        Assert.IsTrue(secondCardPage.State.WaitForDisplayed(), "Avatar Аnd Interests Page is not opened");
 
-        secondCardPage.UploadImage();
+        secondCardPage.UploadImage(imagePath);
         secondCardPage.UnselectAllInterestsCheckBoxClick();
 
         var countCheckedInterests = 0;
-        NumberRangeUtil indexRange = new NumberRangeUtil(0, secondCardPage.Interests.Count);
+        var maxNumberOfInterests = secondCardPage.Interests.Count;
+        List<int> lastTakeNumbers = new List<int>();
 
         do
         {
-            var index = indexRange.GetNextNotRepeatRandomNumber();
+            var index = NumberRangeUtil.GetNextNotRepeatRandomNumber(0, maxNumberOfInterests, lastTakeNumbers);
             var interestName = secondCardPage.GetInterestName(index);
             if (interestName != "interest_selectall" && interestName != "interest_unselectall")
             {
                 secondCardPage.CheckInterest(index);
                 countCheckedInterests++;
             }
-        } while (countCheckedInterests < 3);
+        } while (countCheckedInterests < requiredNumberOfInterests);
 
         secondCardPage.ClickNextButton();
-        var thirdCardPage = new ThirdCardPage();
-        Assert.IsTrue(thirdCardPage.State.WaitForDisplayed(), "Third Card Page is not opened");
+        var thirdCardPage = new PersonalDetailsPage();
+        Assert.IsTrue(thirdCardPage.State.WaitForDisplayed(), "Personal Details Page is not opened");
     }
 
     [Test, Order(2)]
-    public void TestCase2()
+    public void HideHelpFormTest()
     {
         AqualityServices.Browser.GoTo(url);
         AqualityServices.Browser.Maximize();
@@ -74,13 +82,13 @@ public class Tests
         Assert.IsTrue(welcomePage.State.WaitForDisplayed(), "Welcome Page is not opened");
 
         welcomePage.ClickHereButton();
-        var helpForm = new FirstCardPage.HelpForm();
+        var helpForm = new LoginFormPage.HelpForm();
         helpForm.HideHelpForm();
         Assert.IsFalse(helpForm.State.WaitForDisplayed(), "Help Form is not hidden");
     }
 
     [Test, Order(3)]
-    public void TestCase3()
+    public void AcceptCookiesTest()
     {
         AqualityServices.Browser.GoTo(url);
         AqualityServices.Browser.Maximize();
@@ -88,13 +96,13 @@ public class Tests
         Assert.IsTrue(welcomePage.State.WaitForDisplayed(), "Welcome Page is not opened");
 
         welcomePage.ClickHereButton();
-        var firstCardPage = new FirstCardPage();
+        var firstCardPage = new LoginFormPage();
         firstCardPage.ClickAcceptCookiesButton();
         Assert.IsFalse(firstCardPage.CheckCookiesIsDisplayed(), "Cookies is displayed");
     }
 
     [Test, Order(4)]
-    public void TestCase4()
+    public void TimeStartsFromZeroTest()
     {
         AqualityServices.Browser.GoTo(url);
         AqualityServices.Browser.Maximize();
@@ -102,8 +110,8 @@ public class Tests
         Assert.IsTrue(welcomePage.State.WaitForDisplayed(), "Welcome Page is not opened");
 
         welcomePage.ClickHereButton();
-        var firstCardPage = new FirstCardPage();
-        Assert.AreEqual("00:00:00", firstCardPage.GetTimerValue(), "Timer does not start from 00:00:00");
+        var firstCardPage = new LoginFormPage();
+        Assert.AreEqual(timerStartTime, firstCardPage.GetTimerValue(), "Timer does not start from 00:00:00");
     }
 
     [TearDown]

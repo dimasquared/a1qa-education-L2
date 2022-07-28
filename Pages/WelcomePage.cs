@@ -6,14 +6,14 @@ namespace Task2Stage2.Pages;
 
 public class WelcomePage : Form
 {
-    private IButton HereButton => ElementFactory.GetButton(By.XPath("//a[@class = 'start__link']"), "HERE Button");
+    private IButton HereBtn => ElementFactory.GetButton(By.XPath("//a[contains(@class, 'start__link')]"), "Here");
     
-    public WelcomePage() : base(By.XPath("//button[@class = 'start__button']"), "Welcome Page")
+    public WelcomePage() : base(By.XPath("//button[contains(@class, 'start__button')]"), "Welcome Page")
     {
     }
     
     public void ClickHereButton()
     {
-        HereButton.ClickAndWait();
+        HereBtn.ClickAndWait();
     }
 }

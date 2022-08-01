@@ -1,5 +1,6 @@
-using Task4Stage2.APILibrary;
 using Task4Stage2.Models;
+using Task4Stage2.RestApiFramework;
+using Task4Stage2.RestApiFramework.Utils;
 
 namespace Task4Stage2;
 
@@ -10,17 +11,17 @@ public class Tests
     {
     }
 
-    [Test]
+    [Test, Order(1)]
     public void Test1()
     {
-        HttpResponseMessage response = GetResponse.GetPosts();
+        RestClient client = new RestClient("https://jsonplaceholder.typicode.com");
+        RestRequest request = new RestRequest("/posts");
+        RestResponse response = client.Get(request);
         Assert.AreEqual(200, (int)response.StatusCode, "Request returned a non-200 response");
-        
-        var responseString = response.Content.ReadAsStringAsync().Result;
-        var isJson = JsonUtil.TryToDeserializeObject(responseString, out PostData[] posts);
-        Assert.IsTrue(isJson, "The list in response body is not json");
+        Assert.IsTrue(response.IsJson(), "The list in response body is not json");
 
-        for (var i = 0; i < posts.Length; i++)
+        var posts = response.Deserialize<PostData[]>();
+        for (var i = 0; i < posts.Length-1; i++)
         {
             var currentPost = posts[i];
             var nextPost = posts[i+1];

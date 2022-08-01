@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Task4Stage2.APILibrary;
+namespace Task4Stage2.RestApiFramework.Utils;
 
 public static class JsonUtil
 {

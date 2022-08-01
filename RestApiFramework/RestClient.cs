@@ -1,6 +1,6 @@
 ﻿namespace Task4Stage2.RestApiFramework;
 
-public class RestClient : IDisposable
+public class RestClient
 {
     private string _baseUrl;
     private HttpClient _httpClient;
@@ -23,13 +23,20 @@ public class RestClient : IDisposable
         }
     }
 
-    public void Dispose()
+    public RestResponse Post(RestRequest request)
     {
-        throw new NotImplementedException();
+        var url = _baseUrl + request.SubPath;
+        using (HttpRequestMessage httpRequest = new HttpRequestMessage
+                   { Content = request.Data, RequestUri = new Uri(url), Method = HttpMethod.Post })
+        {
+            HttpResponseMessage response = _httpClient.SendAsync(httpRequest).Result;
+            RestResponse result = new RestResponse(response);
+            return result;
+        }
     }
-
+    
     ~RestClient()
     {
-        throw new NotImplementedException();
+        _httpClient.Dispose();
     }
 }

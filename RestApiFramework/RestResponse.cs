@@ -1,4 +1,5 @@
-﻿using Task4Stage2.RestApiFramework.Utils;
+﻿using Newtonsoft.Json.Linq;
+using Task4Stage2.RestApiFramework.Utils;
 
 namespace Task4Stage2.RestApiFramework;
 
@@ -17,6 +18,11 @@ public class RestResponse
     public bool IsJson()
     {
         return JsonUtil.TryToDeserializeObject<object>(ResponseString, out _);
+    }
+    
+    public bool IsJsonEmpty()
+    {
+        return !JToken.Parse(ResponseString).HasValues;
     }
 
     public T Deserialize<T>()

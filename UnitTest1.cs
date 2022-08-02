@@ -6,11 +6,30 @@ namespace Task4Stage2;
 
 public class Tests
 {
+    private string baseUrl;
+    private string postsUrl;
+    private string postIdUrl;
+    private string postNullIdUrl;
+    private string usersUrl;
+    private string userIdUrl;
+    
+    [SetUp]
+    public void Setup()
+    {
+        JsonSettingsFileUtil jConfig = new JsonSettingsFileUtil(@"\Resources\config.json");
+        baseUrl = jConfig.GetValue<string>("baseUrl");
+        postsUrl = jConfig.GetValue<string>("postsUrl");
+        postIdUrl = jConfig.GetValue<string>("postIdUrl");
+        postNullIdUrl = jConfig.GetValue<string>("postNullIdUrl");
+        usersUrl = jConfig.GetValue<string>("usersUrl");
+        userIdUrl = jConfig.GetValue<string>("userIdUrl");
+    }
+
     [Test, Order(1)]
     public void SendGetRequestToGetAllPosts()
     {
-        RestClient client = new RestClient("https://jsonplaceholder.typicode.com");
-        RestRequest request = new RestRequest("/posts");
+        RestClient client = new RestClient(baseUrl);
+        RestRequest request = new RestRequest(postsUrl);
         RestResponse response = client.Get(request);
         Assert.AreEqual(200, (int)response.StatusCode, "Request returned a non-200 response");
         Assert.IsTrue(response.IsJson(), "The list in response body is not json");
@@ -27,8 +46,8 @@ public class Tests
     [Test, Order(2)]
     public void SendGetRequestToGetPostWithId()
     {
-        RestClient client = new RestClient("https://jsonplaceholder.typicode.com");
-        RestRequest request = new RestRequest("/posts/99");
+        RestClient client = new RestClient(baseUrl);
+        RestRequest request = new RestRequest(postIdUrl);
         RestResponse response = client.Get(request);
         Assert.AreEqual(200, (int)response.StatusCode, "Request returned a non-200 response");
 
@@ -42,12 +61,12 @@ public class Tests
     [Test, Order(3)]
     public void SendGetRequestToGetPostWithIncorrectId()
     {
-        RestClient client = new RestClient("https://jsonplaceholder.typicode.com");
-        RestRequest request = new RestRequest("/posts/150");
+        RestClient client = new RestClient(baseUrl);
+        RestRequest request = new RestRequest(postNullIdUrl);
 
         RestResponse response = client.Get(request);
         Assert.AreEqual(404, (int)response.StatusCode, "Request returned a non-404 response");
-        
+
         var posts = response.IsJsonEmpty();
         Assert.IsTrue(posts, "Response body is not empty");
     }
@@ -55,8 +74,8 @@ public class Tests
     [Test, Order(4)]
     public void SendPostRequestToCreatePost()
     {
-        RestClient client = new RestClient("https://jsonplaceholder.typicode.com");
-        RestRequest request = new RestRequest("/posts");
+        RestClient client = new RestClient(baseUrl);
+        RestRequest request = new RestRequest(postsUrl);
 
         var data = new PostData()
         {
@@ -77,8 +96,8 @@ public class Tests
     [Test, Order(5)]
     public void SendGetRequestToGetUsers()
     {
-        RestClient client = new RestClient("https://jsonplaceholder.typicode.com");
-        RestRequest request = new RestRequest("/users");
+        RestClient client = new RestClient(baseUrl);
+        RestRequest request = new RestRequest(usersUrl);
         RestResponse response = client.Get(request);
         Assert.AreEqual(200, (int)response.StatusCode, "Request returned a non-200 response");
         Assert.IsTrue(response.IsJson(), "The list in response body is not json");
@@ -118,8 +137,8 @@ public class Tests
     [Test, Order(6)]
     public void SendGetRequestToGetUserWithIdN()
     {
-        RestClient client = new RestClient("https://jsonplaceholder.typicode.com");
-        RestRequest request = new RestRequest("/users/5");
+        RestClient client = new RestClient(baseUrl);
+        RestRequest request = new RestRequest(userIdUrl);
         RestResponse response = client.Get(request);
         Assert.AreEqual(200, (int)response.StatusCode, "Request returned a non-200 response");
 

@@ -1,5 +1,5 @@
 ﻿{
-  "postData99": {
+  "postDataById": {
     "userId": 10,
     "id": 99
   },
@@ -9,6 +9,8 @@
     "title": "test title",
     "body": "test body"
   },
+  
+  "userIndexForCheck": 5,
   
   "validUserData": {
     "id": 5,

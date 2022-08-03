@@ -8,14 +8,13 @@ public class Tests
 {
     private string baseUrl;
     private string postsUrl;
-    private string postIdUrl;
-    private string postNullIdUrl;
     private string usersUrl;
-    private string userIdUrl;
     private PostData postDataById;
-    private PostData sentPostData;
+    private PostData sendPostData;
     private UsersData validUserData;
     private int userIndexForCheck;
+    private int postIndexForCheck;
+    private int postIncorrectIndexForCheck;
     
     [SetUp]
     public void Setup()
@@ -23,16 +22,15 @@ public class Tests
         JsonSettingsFileUtil jConfig = new JsonSettingsFileUtil(@"\Resources\config.json");
         baseUrl = jConfig.GetValue<string>("baseUrl");
         postsUrl = jConfig.GetValue<string>("postsUrl");
-        postIdUrl = jConfig.GetValue<string>("postIdUrl");
-        postNullIdUrl = jConfig.GetValue<string>("postNullIdUrl");
         usersUrl = jConfig.GetValue<string>("usersUrl");
-        userIdUrl = jConfig.GetValue<string>("userIdUrl");
         
         JsonSettingsFileUtil jTestData = new JsonSettingsFileUtil(@"\Resources\testData.json");
         postDataById = jTestData.GetValue<PostData>("postDataById");
-        sentPostData = jTestData.GetValue<PostData>("sentPostData");
+        sendPostData = jTestData.GetValue<PostData>("sendPostData");
         validUserData = jTestData.GetValue<UsersData>("validUserData");
         userIndexForCheck = jTestData.GetValue<int>("userIndexForCheck");
+        postIndexForCheck = jTestData.GetValue<int>("postIndexForCheck");
+        postIncorrectIndexForCheck = jTestData.GetValue<int>("postIncorrectIndexForCheck");
     }
 
     [Test, Order(1)]
@@ -41,25 +39,20 @@ public class Tests
         RestClient client = new RestClient(baseUrl);
         RestRequest request = new RestRequest(postsUrl);
         RestResponse response = client.Get(request);
-        Assert.AreEqual(200, response.StatusCode, "Request returned a non-200 response");
+        Assert.AreEqual(200, response.StatusCode, "Status code is not 200");
         Assert.IsTrue(response.IsJson(), "The list in response body is not json");
 
         var posts = response.Deserialize<PostData[]>();
-        for (var i = 0; i < posts.Length - 1; i++)
-        {
-            var currentPost = posts[i];
-            var nextPost = posts[i + 1];
-            Assert.IsTrue(nextPost.id > currentPost.id, "Posts are not sorted ascending by id");
-        }
+        Assert.IsTrue(SortUtil.CheckAscendingSortUtil(posts, post => post.id), "Posts are not sorted ascending by id");
     }
 
     [Test, Order(2)]
     public void SendGetRequestToGetPostWithId()
     {
         RestClient client = new RestClient(baseUrl);
-        RestRequest request = new RestRequest(postIdUrl);
+        RestRequest request = new RestRequest(postsUrl + $"//{postIndexForCheck}");
         RestResponse response = client.Get(request);
-        Assert.AreEqual(200, response.StatusCode, "Request returned a non-200 response");
+        Assert.AreEqual(200, response.StatusCode, "Status code is not 200");
 
         var post = response.Deserialize<PostData>();
         Assert.AreEqual(postDataById.userId, post.userId, "userId is not correct");
@@ -72,9 +65,9 @@ public class Tests
     public void SendGetRequestToGetPostWithIncorrectId()
     {
         RestClient client = new RestClient(baseUrl);
-        RestRequest request = new RestRequest(postNullIdUrl);
+        RestRequest request = new RestRequest(postsUrl + $"//{postIncorrectIndexForCheck}");
         RestResponse response = client.Get(request);
-        Assert.AreEqual(404, response.StatusCode, "Request returned a non-404 response");
+        Assert.AreEqual(404, response.StatusCode, "Status code is not 404");
         Assert.IsTrue(response.IsJsonEmpty(), "Response body is not empty");
     }
 
@@ -83,13 +76,13 @@ public class Tests
     {
         RestClient client = new RestClient(baseUrl);
         RestRequest request = new RestRequest(postsUrl);
-        request.AddJsonBody(sentPostData);
+        request.AddJsonBody(sendPostData);
         RestResponse response = client.Post(request);
-        Assert.AreEqual(201, response.StatusCode, "Request returned a non-201 response");
+        Assert.AreEqual(201, response.StatusCode, "Status code is not 201");
 
         var post = response.Deserialize<PostData>();
         Assert.AreNotEqual(0, post.id, "id is not present in response");
-        Assert.IsTrue(sentPostData.EqualsByData(post), "Post information is not correct");
+        Assert.IsTrue(sendPostData.EqualsByData(post), "Post information is not correct");
     }
 
     [Test, Order(5)]
@@ -98,7 +91,7 @@ public class Tests
         RestClient client = new RestClient(baseUrl);
         RestRequest request = new RestRequest(usersUrl);
         RestResponse response = client.Get(request);
-        Assert.AreEqual(200, response.StatusCode, "Request returned a non-200 response");
+        Assert.AreEqual(200, response.StatusCode, "Status code is not 200");
         Assert.IsTrue(response.IsJson(), "The list in response body is not json");
 
         var users = response.Deserialize<UsersData[]>();
@@ -110,9 +103,9 @@ public class Tests
     public void SendGetRequestToGetUserWithIdN()
     {
         RestClient client = new RestClient(baseUrl);
-        RestRequest request = new RestRequest(userIdUrl);
+        RestRequest request = new RestRequest(usersUrl + $"//{userIndexForCheck}");
         RestResponse response = client.Get(request);
-        Assert.AreEqual(200, response.StatusCode, "Request returned a non-200 response");
+        Assert.AreEqual(200, response.StatusCode, "Status code is not 200");
 
         var user = response.Deserialize<UsersData>();
         Assert.AreEqual(validUserData, user, "User data does not equal to required data");

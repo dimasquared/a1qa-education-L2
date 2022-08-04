@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿namespace Task4Stage2.RestApiFramework;
 
-namespace Task4Stage2.RestApiFramework;
-
-public class RestClient
+public static class RestClient
 {
 
     public static RestResponse Get(RestRequest request)
@@ -14,7 +12,6 @@ public class RestClient
         {
             HttpResponseMessage response = httpClient.SendAsync(httpRequest).Result;
             RestResponse result = new RestResponse(response);
-            
             return result;
         }
     }
@@ -31,9 +28,4 @@ public class RestClient
             return result;
         }
     }
-    
-    /*~RestClient()
-    {
-        _httpClient.Dispose();
-    }*/
 }

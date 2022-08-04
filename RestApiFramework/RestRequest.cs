@@ -5,14 +5,17 @@ namespace Task4Stage2.RestApiFramework;
 
 public class RestRequest
 {
+    private readonly string _baseUrl;
     private readonly string _subPath;
     private StringContent _data;
 
     public StringContent Data => _data;
     public string SubPath => _subPath;
+    public string BaseUrl => _baseUrl;
 
-    public RestRequest(string subPath)
+    public RestRequest(string baseUrl, string subPath)
     {
+        _baseUrl = baseUrl;
         _subPath = subPath;
     }
 

@@ -44,15 +44,22 @@ public class Tests
         var myProfilePage = new MyProfilePage();
         Assert.IsTrue(myProfilePage.State.WaitForDisplayed(), "My Profile Page is not opened");
         
-        //step 4
+        //step 4-5
         var postMessage = TextUtil.RandomText();
-        VkApi.WallPost(postMessage, token, apiVersion);
+        var postId = VkApiUtil.WallPost(postMessage, token, apiVersion).ToString();
         var postAuthor = myProfilePage.GetPostAuthor();
         var pageOwner = myProfilePage.GetPageOwner();
         Assert.AreEqual(pageOwner, postAuthor, "Name of post author is wrong");
         var messageOnTheWall = myProfilePage.GetMessageOnTheWall();
         Assert.AreEqual(postMessage, messageOnTheWall, "Message on the wall is wrong");
         
+        //step 8-9
+        var commentMessage = TextUtil.RandomText();
+        VkApiUtil.WallPostComment(postId, commentMessage, token, apiVersion);
+        var commentAuthor = myProfilePage.GetPostCommentAuthor();
+        Assert.AreEqual(pageOwner, commentAuthor, "Name of comment author is wrong");
+        var commentToThePost = myProfilePage.GetPostCommentText();
+        Assert.AreEqual(commentMessage, commentToThePost, "Comment text is wrong");
     }
 
    [TearDown]

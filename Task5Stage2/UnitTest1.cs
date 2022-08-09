@@ -56,10 +56,17 @@ public class Tests
         //step 8-9
         var commentMessage = TextUtil.RandomText();
         VkApiUtil.WallPostComment(postId, commentMessage, token, apiVersion);
+        myProfilePage.ShowNewComment();
         var commentAuthor = myProfilePage.GetPostCommentAuthor();
         Assert.AreEqual(pageOwner, commentAuthor, "Name of comment author is wrong");
         var commentToThePost = myProfilePage.GetPostCommentText();
         Assert.AreEqual(commentMessage, commentToThePost, "Comment text is wrong");
+        
+        //step 12-13
+        var postTime = myProfilePage.GetPostTime();
+        VkApiUtil.DeleteWallPost(postId, token, apiVersion);
+        var lastPostTime = myProfilePage.GetPostTime();
+        Assert.AreEqual(postTime, lastPostTime, "Post was not deleted");
     }
 
    [TearDown]

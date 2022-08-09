@@ -3,7 +3,7 @@ using Task5Stage2.RestApi;
 
 namespace Task5Stage2;
 
-public class VkApiUtil
+public static class VkApiUtil
 {
     public static int WallPost(string postMessage, string token, string apiVersion)
     {
@@ -23,7 +23,7 @@ public class VkApiUtil
         return resultResponse.response.post_id;
     }
 
-    public static RestResponse WallPostComment(string postId, string commentMessage, string token, string apiVersion)
+    public static void WallPostComment(string postId, string commentMessage, string token, string apiVersion)
     {
         var parameters = new Dictionary<string, string>
         {
@@ -37,8 +37,22 @@ public class VkApiUtil
         
         var request = new RestRequest("https://api.vk.com/method/", "wall.createComment");
         request.AddContent(paramsContent);
-        var response = RestClient.Post(request);
+        RestClient.Post(request);
+    }
+    
+    public static void DeleteWallPost(string postId, string token, string apiVersion)
+    {
+        var parameters = new Dictionary<string, string>
+        {
+            {"post_id", postId},
+            { "access_token", token },
+            { "v", apiVersion },
+        };
+
+        var paramsContent = new FormUrlEncodedContent(parameters);
         
-        return response;
+        var request = new RestRequest("https://api.vk.com/method/", "wall.delete");
+        request.AddContent(paramsContent);
+        RestClient.Post(request);
     }
 }

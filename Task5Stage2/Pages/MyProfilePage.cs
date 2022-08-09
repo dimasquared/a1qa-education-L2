@@ -1,4 +1,5 @@
-﻿using Aquality.Selenium.Forms;
+﻿using Aquality.Selenium.Elements.Interfaces;
+using Aquality.Selenium.Forms;
 using OpenQA.Selenium;
 using Task5Stage2.Elements;
 
@@ -16,18 +17,27 @@ public class MyProfilePage : Form
 
     private TextElement MessageOnTheWallTxt => ElementFactory.GetTextElement(
         By.XPath(
-            "//div[@id='page_wall_posts']//div[contains(@class, 'post page_block all own')][1]//div[contains(@class, 'wall_post_text')]"),
+            "//div[@id='page_wall_posts']//div[contains(@id, 'post')][1]//div[contains(@class, 'wall_post_text')]"),
         "Message On The Wall");
 
     private TextElement PostCommentTxt => ElementFactory.GetTextElement(
         By.XPath(
-            "//div[@id='page_wall_posts']//div[contains(@class, 'post page_block all own')][1]//div[contains(@class, 'wall_reply_text')]"),
+            "//div[@id='page_wall_posts']//div[contains(@id, 'post')][1]//child::div[contains(@id, 'replies')]//div[contains(@class, 'wall_reply_text')]"),
         "Comment To The Post");
 
     private TextElement PostCommentAuthorTxt => ElementFactory.GetTextElement(
         By.XPath(
-            "//div[@id='page_wall_posts']//div[contains(@class, 'post page_block all own')][1]//div[contains(@class, 'reply_author')]//a"),
+            "//div[@id='page_wall_posts']//div[contains(@id, 'post')][1]//child::div[contains(@id, 'replies')]//div[contains(@class, 'reply_author')]//a"),
         "Comment's Author");
+    private TextElement PostTimeTxt => ElementFactory.GetTextElement(
+        By.XPath(
+            "//div[@id='page_wall_posts']//div[contains(@class, 'post page_block all own')][1]//span[@class='rel_date']"),
+        "PostTime");
+
+    private ILabel ShowCommentLbl =>
+        ElementFactory.GetLabel(By.XPath("//span[contains(@class,'js-replies_next_label')]"), "Show Comment");
+
+    private IButton ShowCommentBtn => ElementFactory.GetButton(By.XPath("//a[contains(@class,'replies_next')]"), "Show Comment");
 
     public MyProfilePage() : base(By.Id("page_current_info"), "My Profile Page")
     {
@@ -48,6 +58,14 @@ public class MyProfilePage : Form
         return MessageOnTheWallTxt.GetText();
     }
 
+    public void ShowNewComment()
+    {
+        if (ShowCommentLbl.State.IsDisplayed)
+        {
+            ShowCommentBtn.ClickAndWait();
+        }
+    }
+
     public string GetPostCommentAuthor()
     {
         return PostCommentAuthorTxt.GetText();
@@ -56,5 +74,10 @@ public class MyProfilePage : Form
     public string GetPostCommentText()
     {
         return PostCommentTxt.GetText();
+    } 
+    
+    public string GetPostTime()
+    {
+        return PostTimeTxt.GetAttribute("time");
     }
 }

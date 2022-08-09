@@ -1,3 +1,9 @@
 {
-  "url": "https://vk.com/"
+  "ui": {
+    "url": "https://vk.com/"
+  },
+  
+  "api": {
+    "version": "5.131"
+  }
 }

@@ -1,5 +1,10 @@
 {
-  "login": "+375291660762",
-  "password": "PuV6j_.2&$m9h?UYY",
-  "access_token": ""
+  "userData": {
+    "login": "+375291660762",
+    "password": "PuV6j_.2&$m9h?UYY",
+    "access_token": "vk1.a.hsISII39eHnJ3UCyKaA9U4WCrjUB7XkY4u7rLL_LUPGVLIf4uqpxL1jegdE3OVgVb85m4bFbxSJsSI0CSNuG69aEsW7hRALgWWr3j2UXteZwYi42O8nyXpj08RAITGR5Zhjq0UCq2KoURbSDB3Wom7H5UkuEKRLykHurwtFX4q-bfq8RnjF73_8nb9_Dpjnh"
+  },
+  "wallPostData": {
+    "message": "Hi, John Doe"
+  }
 }

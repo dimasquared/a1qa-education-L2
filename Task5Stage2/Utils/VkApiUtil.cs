@@ -1,7 +1,7 @@
 ﻿using Task5Stage2.Models;
 using Task5Stage2.RestApi;
 
-namespace Task5Stage2;
+namespace Task5Stage2.Utils;
 
 public static class VkApiUtil
 {

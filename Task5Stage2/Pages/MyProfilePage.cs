@@ -31,11 +31,8 @@ public class MyProfilePage : Form
         "Comment's Author");
     private TextElement PostTimeTxt => ElementFactory.GetTextElement(
         By.XPath(
-            "//div[@id='page_wall_posts']//div[contains(@class, 'post page_block all own')][1]//span[@class='rel_date']"),
+            "//div[@id='page_wall_posts']//div[contains(@id, 'post')][1]//child::div[contains(@class, 'post_date')]//span[contains(@class, 'rel_date')]"),
         "PostTime");
-
-    private ILabel ShowCommentLbl =>
-        ElementFactory.GetLabel(By.XPath("//span[contains(@class,'js-replies_next_label')]"), "Show Comment");
 
     private IButton ShowCommentBtn => ElementFactory.GetButton(By.XPath("//a[contains(@class,'replies_next')]"), "Show Comment");
 
@@ -60,10 +57,7 @@ public class MyProfilePage : Form
 
     public void ShowNewComment()
     {
-        if (ShowCommentLbl.State.IsDisplayed)
-        {
-            ShowCommentBtn.ClickAndWait();
-        }
+        ShowCommentBtn.ClickAndWait(); 
     }
 
     public string GetPostCommentAuthor()

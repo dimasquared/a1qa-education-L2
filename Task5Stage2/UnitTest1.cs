@@ -13,6 +13,7 @@ public class Tests
     private string token;
     private string login;
     private string apiVersion;
+    private int userId;
 
     [SetUp]
     public void Setup()
@@ -25,6 +26,7 @@ public class Tests
         login = testData.GetValue<string>("userData.login");
         password = testData.GetValue<string>("userData.password");
         token = testData.GetValue<string>("userData.access_token");
+        userId = testData.GetValue<int>("userData.userId");
     }
 
     [Test]
@@ -51,7 +53,7 @@ public class Tests
         var pageOwner = myProfilePage.GetPageOwner();
         Assert.AreEqual(pageOwner, postAuthor, "Name of post author is wrong");
         var messageOnTheWall = myProfilePage.GetMessageOnTheWall();
-        Assert.AreEqual(postMessage, messageOnTheWall, "Message on the wall is wrong");
+        Assert.AreEqual(postMessage, messageOnTheWall, "The message on the wall is wrong");
         
         //step 8-9
         var commentMessage = TextUtil.RandomText();
@@ -60,13 +62,16 @@ public class Tests
         var commentAuthor = myProfilePage.GetPostCommentAuthor();
         Assert.AreEqual(pageOwner, commentAuthor, "Name of comment author is wrong");
         var commentToThePost = myProfilePage.GetPostCommentText();
-        Assert.AreEqual(commentMessage, commentToThePost, "Comment text is wrong");
+        Assert.AreEqual(commentMessage, commentToThePost, "The comment text is wrong");
+        
+        //step 10-11
+        myProfilePage.LikePost();
+        var userWhoLikedId = VkApiUtil.AddLikeToThePost(postId, token, apiVersion);
+        Assert.IsTrue(userWhoLikedId.Any(user => user.uid == userId), "There is no like from requested user");
         
         //step 12-13
-        var postTime = myProfilePage.GetPostTime();
         VkApiUtil.DeleteWallPost(postId, token, apiVersion);
-        var lastPostTime = myProfilePage.GetPostTime();
-        Assert.AreEqual(postTime, lastPostTime, "Post was not deleted");
+        Assert.IsTrue(myProfilePage.CheckPostDeleted(), "The post was not deleted");
     }
 
    [TearDown]

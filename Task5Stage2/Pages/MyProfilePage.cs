@@ -29,12 +29,14 @@ public class MyProfilePage : Form
         By.XPath(
             "//div[@id='page_wall_posts']//div[contains(@id, 'post')][1]//child::div[contains(@id, 'replies')]//div[contains(@class, 'reply_author')]//a"),
         "Comment's Author");
-    private TextElement PostTimeTxt => ElementFactory.GetTextElement(
-        By.XPath(
-            "//div[@id='page_wall_posts']//div[contains(@id, 'post')][1]//child::div[contains(@class, 'post_date')]//span[contains(@class, 'rel_date')]"),
-        "PostTime");
 
-    private IButton ShowCommentBtn => ElementFactory.GetButton(By.XPath("//a[contains(@class,'replies_next')]"), "Show Comment");
+    private IButton ShowCommentBtn =>
+        ElementFactory.GetButton(By.XPath("//a[contains(@class,'replies_next')]"), "Show Comment");
+
+    private IButton LikePostBtn => ElementFactory.GetButton(
+        By.XPath(
+            "//div[@id='page_wall_posts']//div[contains(@id, 'post')][1]//child::div[contains(@class, 'PostButtonReactionsContainer')]"),
+        "Like Post");
 
     public MyProfilePage() : base(By.Id("page_current_info"), "My Profile Page")
     {
@@ -57,7 +59,7 @@ public class MyProfilePage : Form
 
     public void ShowNewComment()
     {
-        ShowCommentBtn.ClickAndWait(); 
+        ShowCommentBtn.ClickAndWait();
     }
 
     public string GetPostCommentAuthor()
@@ -68,10 +70,15 @@ public class MyProfilePage : Form
     public string GetPostCommentText()
     {
         return PostCommentTxt.GetText();
-    } 
-    
-    public string GetPostTime()
+    }
+
+    public void LikePost()
     {
-        return PostTimeTxt.GetAttribute("time");
+        LikePostBtn.ClickAndWait();
+    }
+
+    public bool CheckPostDeleted()
+    {
+        return MessageOnTheWallTxt.State.IsDisplayed;
     }
 }

@@ -40,6 +40,24 @@ public static class VkApiUtil
         RestClient.Post(request);
     }
     
+    public static List<GetLikesResult.User> AddLikeToThePost(string postId, string token, string apiVersion)
+    {
+        var parameters = new Dictionary<string, string>
+        {
+            { "post_id", postId },
+            { "access_token", token },
+            { "v", apiVersion },
+        };
+
+        var paramsContent = new FormUrlEncodedContent(parameters);
+
+        var request = new RestRequest("https://api.vk.com/method/", "wall.getLikes");
+        request.AddContent(paramsContent);
+        var response = RestClient.Post(request);
+        var resultResponse = response.Deserialize<GetLikesResult>();
+        return resultResponse.response.users;
+    }
+    
     public static void DeleteWallPost(string postId, string token, string apiVersion)
     {
         var parameters = new Dictionary<string, string>

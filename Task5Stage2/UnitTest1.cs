@@ -55,6 +55,12 @@ public class Tests
         var messageOnTheWall = myProfilePage.GetMessageOnTheWall();
         Assert.AreEqual(postMessage, messageOnTheWall, "The message on the wall is wrong");
         
+        //steps 6-7
+        var newPostMessage = TextUtil.RandomText();
+        VkApiUtil.EditWallPost(postId, newPostMessage, token, apiVersion);
+        var newMessageOnTheWall = myProfilePage.GetMessageOnTheWall();
+        Assert.AreEqual(newPostMessage, newMessageOnTheWall, "The message on the wall was not edited");
+        
         //step 8-9
         var commentMessage = TextUtil.RandomText();
         VkApiUtil.WallPostComment(postId, commentMessage, token, apiVersion);

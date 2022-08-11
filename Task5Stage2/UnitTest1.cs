@@ -1,3 +1,4 @@
+using System.Text;
 using Aquality.Selenium.Browsers;
 using Aquality.Selenium.Core.Configurations;
 using Aquality.Selenium.Core.Utilities;
@@ -13,6 +14,7 @@ public class Tests
     private string token;
     private string login;
     private string apiVersion;
+    private string imagePath;
     private int userId;
 
     [SetUp]
@@ -27,6 +29,9 @@ public class Tests
         password = testData.GetValue<string>("userData.password");
         token = testData.GetValue<string>("userData.access_token");
         userId = testData.GetValue<int>("userData.userId");
+        imagePath = testData.GetValue<string>("imagePath");
+        
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }
 
     [Test]
@@ -57,7 +62,7 @@ public class Tests
         
         //steps 6-7
         var newPostMessage = TextUtil.RandomText();
-        VkApiUtil.EditWallPost(postId, newPostMessage, token, apiVersion);
+        VkApiUtil.EditWallPostAddImage(postId, newPostMessage, imagePath, token, apiVersion);
         var newMessageOnTheWall = myProfilePage.GetMessageOnTheWall();
         Assert.AreEqual(newPostMessage, newMessageOnTheWall, "The message on the wall was not edited");
         

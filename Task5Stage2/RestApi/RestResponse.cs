@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using System.Text;
+using Newtonsoft.Json;
 
 namespace Task5Stage2.RestApi;
 
@@ -7,27 +7,33 @@ public class RestResponse
 {
     private HttpResponseMessage _responseMessage;
 
-    public int StatusCode => (int)_responseMessage.StatusCode;
-    private string ResponseString => _responseMessage.Content.ReadAsStringAsync().Result;
-
     public RestResponse(HttpResponseMessage responseMessage)
     {
         _responseMessage = responseMessage;
     }
 
-   /* public bool IsJson()
+    public enum EncodingType
     {
-        return JsonUtil.TryToDeserializeObject<object>(ResponseString, out _);
-    }*/
-    
-    public bool IsJsonEmpty()
-    {
-        return !JToken.Parse(ResponseString).HasValues;
+        utf_8, win1251
     }
 
-    public T Deserialize<T>()
+    public T Deserialize<T>(EncodingType encoding = EncodingType.utf_8)
     {
-        var obj = JsonConvert.DeserializeObject<T>(ResponseString);
+        var obj = JsonConvert.DeserializeObject<T>(ResponseString(encoding));
         return obj;
+    }
+    
+    private string ResponseString(EncodingType encoding = EncodingType.utf_8)
+    {
+
+        if (encoding == EncodingType.win1251)
+        {
+            var httpContent = _responseMessage.Content.ReadAsByteArrayAsync().Result;
+            return Encoding.GetEncoding(1251).GetString(httpContent, 0, httpContent.Length);
+        }
+        else
+        {
+            return _responseMessage.Content.ReadAsStringAsync().Result;
+        }
     }
 }

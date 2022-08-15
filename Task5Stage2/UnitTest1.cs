@@ -15,6 +15,7 @@ public class Tests
     private string login;
     private string apiVersion;
     private string imagePath;
+    private string imagePath2;
     private int userId;
 
     [SetUp]
@@ -30,6 +31,7 @@ public class Tests
         token = testData.GetValue<string>("userData.access_token");
         userId = testData.GetValue<int>("userData.userId");
         imagePath = testData.GetValue<string>("imagePath");
+        imagePath2 = testData.GetValue<string>("imagePath2");
         
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }
@@ -66,6 +68,7 @@ public class Tests
         var newMessageOnTheWall = myProfilePage.GetMessageOnTheWall();
         Assert.AreEqual(newPostMessage, newMessageOnTheWall, "The message on the wall was not edited");
         
+        
         //step 8-9
         var commentMessage = TextUtil.RandomText();
         VkApiUtil.WallPostComment(postId, commentMessage, token, apiVersion);
@@ -85,7 +88,13 @@ public class Tests
         Assert.IsTrue(myProfilePage.CheckPostDeleted(), "The post was not deleted");
     }
 
-   [TearDown]
+    [Test]
+    public void CheckCompareImages()
+    {
+        Assert.IsTrue(CompareImagesUtil.CompareImages(imagePath, imagePath2));
+    }
+
+    [TearDown]
     public void CleanUp()
     {
         if (AqualityServices.IsBrowserStarted)

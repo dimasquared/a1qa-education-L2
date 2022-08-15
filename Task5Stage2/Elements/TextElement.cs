@@ -6,9 +6,9 @@ namespace Task5Stage2.Elements;
 
 public class TextElement : Element
 {
+    protected override string ElementType { get; }
+
     public TextElement(By locator, string name, ElementState state) : base(locator, name, state)
     {
     }
-
-    protected override string ElementType { get; }
 }

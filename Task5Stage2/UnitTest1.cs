@@ -30,8 +30,8 @@ public class Tests
         password = testData.GetValue<string>("userData.password");
         token = testData.GetValue<string>("userData.access_token");
         userId = testData.GetValue<int>("userData.userId");
-        imagePath = testData.GetValue<string>("imagePath");
-        imagePath2 = testData.GetValue<string>("imagePath2");
+        imagePath = Environment.CurrentDirectory + testData.GetValue<string>("imagePath");
+        imagePath2 = Environment.CurrentDirectory + testData.GetValue<string>("imagePath2");
         
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }

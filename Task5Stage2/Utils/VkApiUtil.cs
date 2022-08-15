@@ -57,7 +57,7 @@ public static class VkApiUtil
         var resultUploadServerResponse = uploadServerResponse.Deserialize<GetWallUploadServerResult>();
         var uploadUrl = resultUploadServerResponse.response.upload_url;
 
-        byte[] imgdata = File.ReadAllBytes(Environment.CurrentDirectory + imgPath);
+        byte[] imgdata = File.ReadAllBytes(imgPath);
         var imageContent = new ByteArrayContent(imgdata);
         var multipartContent = new MultipartFormDataContent();
         multipartContent.Add(imageContent, "photo", "image.jpg");

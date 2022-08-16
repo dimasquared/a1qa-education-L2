@@ -1,5 +1,4 @@
-﻿using Aquality.Selenium.Browsers;
-using Task5Stage2.Models;
+﻿using Task5Stage2.Models;
 using Task5Stage2.RestApi;
 
 namespace Task5Stage2.Utils;
@@ -102,7 +101,6 @@ public static class VkApiUtil
         var request = new RestRequest("https://api.vk.com/method/", "wall.edit");
         request.AddContent(paramsContent);
         RestClient.Post(request);
-        AqualityServices.ConditionalWait.WaitFor(() => false, TimeSpan.FromSeconds(0.5));
     }
 
     public static List<GetLikesResult.User> AddLikeToThePost(string postId, string token, string apiVersion)

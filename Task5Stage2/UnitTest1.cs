@@ -15,7 +15,6 @@ public class Tests
     private string login;
     private string apiVersion;
     private string imagePath;
-    private string imagePath2;
     private int userId;
 
     [SetUp]
@@ -31,8 +30,7 @@ public class Tests
         token = testData.GetValue<string>("userData.access_token");
         userId = testData.GetValue<int>("userData.userId");
         imagePath = Environment.CurrentDirectory + testData.GetValue<string>("imagePath");
-        imagePath2 = Environment.CurrentDirectory + testData.GetValue<string>("imagePath2");
-        
+
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }
 
@@ -52,7 +50,7 @@ public class Tests
         feedPage.ClickMyProfileButton();
         var myProfilePage = new MyProfilePage();
         Assert.IsTrue(myProfilePage.State.WaitForDisplayed(), "My Profile Page is not opened");
-        
+
         //step 4-5
         var postMessage = TextUtil.RandomText();
         var postId = VkApiUtil.WallPost(postMessage, token, apiVersion).ToString();
@@ -61,14 +59,17 @@ public class Tests
         Assert.AreEqual(pageOwner, postAuthor, "Name of post author is wrong");
         var messageOnTheWall = myProfilePage.GetMessageOnTheWall();
         Assert.AreEqual(postMessage, messageOnTheWall, "The message on the wall is wrong");
-        
+
         //steps 6-7
         var newPostMessage = TextUtil.RandomText();
         VkApiUtil.EditWallPostAddImage(postId, newPostMessage, imagePath, token, apiVersion);
+        myProfilePage.WaitForEditPostLoad();
         var newMessageOnTheWall = myProfilePage.GetMessageOnTheWall();
         Assert.AreEqual(newPostMessage, newMessageOnTheWall, "The message on the wall was not edited");
-        
-        
+        var imageUrl = myProfilePage.GetImageUrlFromTheWall();
+        Assert.IsTrue(CompareImagesUtil.CompareImages(imagePath, imageUrl), "The image on the wall is wrong");
+
+
         //step 8-9
         var commentMessage = TextUtil.RandomText();
         VkApiUtil.WallPostComment(postId, commentMessage, token, apiVersion);
@@ -77,21 +78,15 @@ public class Tests
         Assert.AreEqual(pageOwner, commentAuthor, "Name of comment author is wrong");
         var commentToThePost = myProfilePage.GetPostCommentText();
         Assert.AreEqual(commentMessage, commentToThePost, "The comment text is wrong");
-        
+
         //step 10-11
         myProfilePage.LikePost();
         var userWhoLikedId = VkApiUtil.AddLikeToThePost(postId, token, apiVersion);
         Assert.IsTrue(userWhoLikedId.Any(user => user.uid == userId), "There is no like from requested user");
-        
+
         //step 12-13
         VkApiUtil.DeleteWallPost(postId, token, apiVersion);
         Assert.IsTrue(myProfilePage.CheckPostDeleted(), "The post was not deleted");
-    }
-
-    [Test]
-    public void CheckCompareImages()
-    {
-        Assert.IsTrue(CompareImagesUtil.CompareImages(imagePath, imagePath2));
     }
 
     [TearDown]

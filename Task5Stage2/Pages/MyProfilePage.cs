@@ -1,4 +1,5 @@
-﻿using Aquality.Selenium.Elements.Interfaces;
+﻿using Aquality.Selenium.Browsers;
+using Aquality.Selenium.Elements.Interfaces;
 using Aquality.Selenium.Forms;
 using OpenQA.Selenium;
 using Task5Stage2.Elements;
@@ -38,6 +39,19 @@ public class MyProfilePage : Form
             "//div[@id='page_wall_posts']//div[contains(@id, 'post')][1]//child::div[contains(@class, 'PostButtonReactionsContainer')]"),
         "Like Post");
 
+    private ILink ImageOnTheWallLnk =>
+        ElementFactory.GetLink(
+            By.XPath("//div[@id='page_wall_posts']//div[contains(@id, 'post')][1]//a[@aria-label = 'photo']"), "Image On The Wall");
+
+    private IButton MoreMenuBtn => ElementFactory.GetButton(
+        By.XPath("//div[contains (@class, 'pv_bottom_actions')]//a[contains(@class, 'pv_actions_more')]"), "More Menu");
+
+    private ILink ImageDownloadLnk = ElementFactory.GetLink(By.XPath("//div[contains (@class, 'pv_bottom_actions')]//a[contains(@class, 'more_shown')]//a[@id='pv_more_act_download']"), "Image Download");
+
+    private IButton CloseImageBtn =
+        ElementFactory.GetButton(By.XPath("//div[@id = 'pv_box']//div[contains(@class, 'pv_close_btn')]"),
+            "Close Image");
+    
     public MyProfilePage() : base(By.Id("page_current_info"), "My Profile Page")
     {
     }
@@ -80,5 +94,19 @@ public class MyProfilePage : Form
     public bool CheckPostDeleted()
     {
         return MessageOnTheWallTxt.State.IsDisplayed;
+    }
+
+    public string GetImageUrlFromTheWall()
+    {
+       ImageOnTheWallLnk.ClickAndWait();
+       MoreMenuBtn.Click();
+       var imgUrl = ImageDownloadLnk.Href;
+       CloseImageBtn.ClickAndWait();
+       return imgUrl;
+    }
+
+    public void WaitForEditPostLoad()
+    {
+        AqualityServices.ConditionalWait.WaitFor(() => ImageOnTheWallLnk.State.IsClickable, TimeSpan.FromSeconds(1));
     }
 }

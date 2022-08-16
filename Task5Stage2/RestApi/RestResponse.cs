@@ -31,9 +31,7 @@ public class RestResponse
             var httpContent = _responseMessage.Content.ReadAsByteArrayAsync().Result;
             return Encoding.GetEncoding(1251).GetString(httpContent, 0, httpContent.Length);
         }
-        else
-        {
-            return _responseMessage.Content.ReadAsStringAsync().Result;
-        }
+
+        return _responseMessage.Content.ReadAsStringAsync().Result;
     }
 }

@@ -1,7 +1,4 @@
-﻿using System.Text;
-using Newtonsoft.Json;
-
-namespace Task5Stage2.RestApi;
+﻿namespace Task5Stage2.RestApi;
 
 public class RestRequest
 {
@@ -23,11 +20,4 @@ public class RestRequest
     {
         _data = obj;
     }
-    
-    public void AddJsonBody<T>(T obj)
-    {
-        var json = JsonConvert.SerializeObject(obj);
-        _data = new StringContent(json, Encoding.UTF8, "application/json");
-    }
-    
 }

@@ -6,7 +6,7 @@ namespace Task5Stage2.Pages;
 
 public class FeedPage : Form
 {
-    private ILink MyProfileBtn => ElementFactory.GetLink(By.Id("l_pr"), "My Profile");
+    private IButton MyProfileBtn => ElementFactory.GetButton(By.XPath("//li[@id='l_pr']//a"), "My Profile");
 
     public FeedPage() : base(By.Id("stories_feed_items"), "Feed Page")
     {

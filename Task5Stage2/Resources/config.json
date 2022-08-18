@@ -1,8 +1,5 @@
 {
-  "ui": {
-    "url": "https://vk.com/"
-  },
-  
+  "url": "https://vk.com/",
   "api": {
     "baseUrl": "https://api.vk.com/method/",
     "methods": {

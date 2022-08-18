@@ -13,32 +13,14 @@ public class Tests
     private string password;
     private string token;
     private string login;
-    private string apiVersion;
     private string imagePath;
     private int userId;
-    private string baseUrlApi;
-    private string wallPostMethod;
-    private string wallCreateCommentMethod;
-    private string wallEditPostMethod;
-    private string wallGetLikesToThePostMethod;
-    private string wallDeletePostMethod;
-    private string photosGetWallUploadServerMethod;
-    private string photosSaveWallPhotoMethod;
 
     [SetUp]
     public void Setup()
     {
         ISettingsFile config = new JsonSettingsFile(Environment.CurrentDirectory + @"\Resources\config.json");
-        url = config.GetValue<string>("ui.url");
-        apiVersion = config.GetValue<string>("api.version");
-        baseUrlApi = config.GetValue<string>("api.baseUrl");
-        wallPostMethod = config.GetValue<string>("api.methods.wallPost");
-        wallCreateCommentMethod = config.GetValue<string>("api.methods.wallCreateComment");
-        wallEditPostMethod = config.GetValue<string>("api.methods.wallEditPost");
-        wallGetLikesToThePostMethod = config.GetValue<string>("api.methods.wallGetLikesToThePost");
-        wallDeletePostMethod = config.GetValue<string>("api.methods.wallDeletePost");
-        photosGetWallUploadServerMethod = config.GetValue<string>("api.methods.photosGetWallUploadServer");
-        photosSaveWallPhotoMethod = config.GetValue<string>("api.methods.photosSaveWallPhoto");
+        url = config.GetValue<string>("url");
 
         ISettingsFile testData = new JsonSettingsFile(Environment.CurrentDirectory + @"\Resources\testData.json");
         login = testData.GetValue<string>("userData.login");
@@ -68,7 +50,7 @@ public class Tests
         Assert.IsTrue(myProfilePage.State.WaitForDisplayed(), "My Profile Page is not opened");
 
         var postMessage = TextUtil.RandomText();
-        var postId = VkApiUtil.WallPost(baseUrlApi, wallPostMethod, postMessage, token, apiVersion).ToString();
+        var postId = VkApiUtil.WallPost(postMessage, token).ToString();
         var postAuthor = myProfilePage.GetPostAuthor();
         var pageOwner = myProfilePage.GetPageOwner();
         Assert.AreEqual(pageOwner, postAuthor, "Name of post author is wrong");
@@ -76,8 +58,7 @@ public class Tests
         Assert.AreEqual(postMessage, messageOnTheWall, "The message on the wall is wrong");
 
         var newPostMessage = TextUtil.RandomText();
-        VkApiUtil.EditWallPostAddImage(baseUrlApi, wallEditPostMethod, photosGetWallUploadServerMethod,
-            photosSaveWallPhotoMethod, postId, newPostMessage, imagePath, token, apiVersion);
+        VkApiUtil.EditWallPostAddImage(postId, newPostMessage, imagePath, token);
         myProfilePage.WaitForEditPostLoad();
         var newMessageOnTheWall = myProfilePage.GetMessageOnTheWall();
         Assert.AreEqual(newPostMessage, newMessageOnTheWall, "The message on the wall was not edited");
@@ -85,7 +66,7 @@ public class Tests
         Assert.IsTrue(CompareImagesUtil.CompareImages(imagePath, imageUrl), "The image on the wall is wrong");
 
         var commentMessage = TextUtil.RandomText();
-        VkApiUtil.WallPostComment(baseUrlApi, wallCreateCommentMethod, postId, commentMessage, token, apiVersion);
+        VkApiUtil.WallPostComment(postId, commentMessage, token);
         myProfilePage.ShowNewComment();
         var commentAuthor = myProfilePage.GetPostCommentAuthor();
         Assert.AreEqual(pageOwner, commentAuthor, "Name of comment author is wrong");
@@ -93,11 +74,10 @@ public class Tests
         Assert.AreEqual(commentMessage, commentToThePost, "The comment text is wrong");
 
         myProfilePage.LikePost();
-        var userWhoLikedId =
-            VkApiUtil.AddLikeToThePost(baseUrlApi, wallGetLikesToThePostMethod, postId, token, apiVersion);
+        var userWhoLikedId = VkApiUtil.AddLikeToThePost(postId, token);
         Assert.IsTrue(userWhoLikedId.Any(user => user.uid == userId), "There is no like from requested user");
 
-        VkApiUtil.DeleteWallPost(baseUrlApi, wallDeletePostMethod, postId, token, apiVersion);
+        VkApiUtil.DeleteWallPost(postId, token);
         Assert.IsTrue(myProfilePage.CheckPostDeleted(), "The post was not deleted");
     }
 

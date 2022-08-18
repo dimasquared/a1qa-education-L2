@@ -13,7 +13,7 @@ public class MyProfilePage : Form
 
     private TextElement PostAuthorTxt => ElementFactory.GetTextElement(
         By.XPath(
-            "//div[@id='page_wall_posts']//div[contains(@class, 'post page_block all own')][1]//h5[contains(@class, 'post_author')]//a"),
+            "//div[@id='page_wall_posts']//div[contains(@class, 'post page_block all own')][1]//a[contains(@class, 'author')]"),
         "Post Author");
 
     private TextElement MessageOnTheWallTxt => ElementFactory.GetTextElement(

@@ -1,12 +1,27 @@
-﻿using Task5Stage2.Models;
+﻿using Aquality.Selenium.Core.Configurations;
+using Aquality.Selenium.Core.Utilities;
+using Task5Stage2.Models;
 using Task5Stage2.RestApi;
 
 namespace Task5Stage2.Utils;
 
 public static class VkApiUtil
 {
-    public static int WallPost(string baseUrl, string method, string postMessage, string token, string apiVersion)
+   
+    private static ISettingsFile config = new JsonSettingsFile(Environment.CurrentDirectory + @"\Resources\config.json");
+    private static string apiVersion = config.GetValue<string>("api.version");
+    private static string baseUrl = config.GetValue<string>("api.baseUrl");
+    private static string wallPostMethod = config.GetValue<string>("api.methods.wallPost");
+    private static string wallCreateCommentMethod = config.GetValue<string>("api.methods.wallCreateComment");
+    private static string wallEditPostMethod = config.GetValue<string>("api.methods.wallEditPost");
+    private static string wallGetLikesToThePostMethod = config.GetValue<string>("api.methods.wallGetLikesToThePost");
+    private static string wallDeletePostMethod = config.GetValue<string>("api.methods.wallDeletePost");
+    private static string photosGetWallUploadServerMethod = config.GetValue<string>("api.methods.photosGetWallUploadServer");
+    private static string photosSaveWallPhotoMethod = config.GetValue<string>("api.methods.photosSaveWallPhoto");
+    
+    public static int WallPost(string postMessage, string token)
     {
+    
         var parameters = new Dictionary<string, string>
         {
             { "message", postMessage },
@@ -16,15 +31,15 @@ public static class VkApiUtil
 
         var paramsContent = new FormUrlEncodedContent(parameters);
 
-        var request = new RestRequest(baseUrl, method);
+        var request = new RestRequest(baseUrl, wallPostMethod);
         request.AddContent(paramsContent);
         var response = RestClient.Post(request);
         var resultResponse = response.Deserialize<WallPostResult>();
         return resultResponse.response.post_id;
     }
 
-    public static void WallPostComment(string baseUrl, string method, string postId, string commentMessage,
-        string token, string apiVersion)
+    public static void WallPostComment(string postId, string commentMessage,
+        string token)
     {
         var parameters = new Dictionary<string, string>
         {
@@ -36,16 +51,14 @@ public static class VkApiUtil
 
         var paramsContent = new FormUrlEncodedContent(parameters);
 
-        var request = new RestRequest(baseUrl, method);
+        var request = new RestRequest(baseUrl, wallCreateCommentMethod);
         request.AddContent(paramsContent);
         RestClient.Post(request);
     }
 
-    public static void EditWallPostAddImage(string baseUrl, string methodEdit, string methodGetServer,
-        string methodSave, string postId, string postMessage, string imgPath, string token,
-        string apiVersion)
+    public static void EditWallPostAddImage(string postId, string postMessage, string imgPath, string token)
     {
-        var image = LoadImage(baseUrl, methodGetServer, methodSave, imgPath, token, apiVersion);
+        var image = LoadImage(imgPath, token);
 
         var parameters = new Dictionary<string, string>
         {
@@ -58,13 +71,12 @@ public static class VkApiUtil
 
         var paramsContent = new FormUrlEncodedContent(parameters);
 
-        var request = new RestRequest(baseUrl, methodEdit);
+        var request = new RestRequest(baseUrl, wallEditPostMethod);
         request.AddContent(paramsContent);
         RestClient.Post(request);
     }
 
-    public static List<GetLikesResult.User> AddLikeToThePost(string baseUrl, string method, string postId, string token,
-        string apiVersion)
+    public static List<GetLikesResult.User> AddLikeToThePost(string postId, string token)
     {
         var parameters = new Dictionary<string, string>
         {
@@ -75,14 +87,14 @@ public static class VkApiUtil
 
         var paramsContent = new FormUrlEncodedContent(parameters);
 
-        var request = new RestRequest(baseUrl, method);
+        var request = new RestRequest(baseUrl, wallGetLikesToThePostMethod);
         request.AddContent(paramsContent);
         var response = RestClient.Post(request);
         var resultResponse = response.Deserialize<GetLikesResult>();
         return resultResponse.response.users;
     }
 
-    public static void DeleteWallPost(string baseUrl, string method, string postId, string token, string apiVersion)
+    public static void DeleteWallPost(string postId, string token)
     {
         var parameters = new Dictionary<string, string>
         {
@@ -93,13 +105,12 @@ public static class VkApiUtil
 
         var paramsContent = new FormUrlEncodedContent(parameters);
 
-        var request = new RestRequest(baseUrl, method);
+        var request = new RestRequest(baseUrl, wallDeletePostMethod);
         request.AddContent(paramsContent);
         RestClient.Post(request);
     }
 
-    private static List<SavePhotoResult.Response> LoadImage(string baseUrl, string methodGetServer, string methodSave,
-        string imgPath, string token, string apiVersion)
+    private static List<SavePhotoResult.Response> LoadImage(string imgPath, string token)
     {
         var parametersUploadServer = new Dictionary<string, string>
         {
@@ -109,7 +120,7 @@ public static class VkApiUtil
 
         var paramsUploadServerContent = new FormUrlEncodedContent(parametersUploadServer);
 
-        var uploadServerRequest = new RestRequest(baseUrl, methodGetServer);
+        var uploadServerRequest = new RestRequest(baseUrl, photosGetWallUploadServerMethod);
         uploadServerRequest.AddContent(paramsUploadServerContent);
         var uploadServerResponse = RestClient.Post(uploadServerRequest);
         var resultUploadServerResponse = uploadServerResponse.Deserialize<GetWallUploadServerResult>();
@@ -135,7 +146,7 @@ public static class VkApiUtil
 
         var paramsSavePhotoContent = new FormUrlEncodedContent(parametersSavePhoto);
 
-        var savePhotoRequest = new RestRequest(baseUrl, methodSave);
+        var savePhotoRequest = new RestRequest(baseUrl, photosSaveWallPhotoMethod);
         savePhotoRequest.AddContent(paramsSavePhotoContent);
         var savePhotoResponse = RestClient.Post(savePhotoRequest);
         var resultSavePhotoResponse = savePhotoResponse.Deserialize<SavePhotoResult>();

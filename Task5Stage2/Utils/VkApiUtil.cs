@@ -11,13 +11,14 @@ public static class VkApiUtil
     private static ISettingsFile config = new JsonSettingsFile(Environment.CurrentDirectory + @"\Resources\config.json");
     private static string apiVersion = config.GetValue<string>("api.version");
     private static string baseUrl = config.GetValue<string>("api.baseUrl");
-    private static string wallPostMethod = config.GetValue<string>("api.methods.wallPost");
-    private static string wallCreateCommentMethod = config.GetValue<string>("api.methods.wallCreateComment");
-    private static string wallEditPostMethod = config.GetValue<string>("api.methods.wallEditPost");
-    private static string wallGetLikesToThePostMethod = config.GetValue<string>("api.methods.wallGetLikesToThePost");
-    private static string wallDeletePostMethod = config.GetValue<string>("api.methods.wallDeletePost");
-    private static string photosGetWallUploadServerMethod = config.GetValue<string>("api.methods.photosGetWallUploadServer");
-    private static string photosSaveWallPhotoMethod = config.GetValue<string>("api.methods.photosSaveWallPhoto");
+    
+    private static string wallPostMethod = "wall.post";
+    private static string wallCreateCommentMethod = "api.methods.wallCreateComment";
+    private static string wallEditPostMethod = "api.methods.wallEditPost";
+    private static string wallGetLikesToThePostMethod = "api.methods.wallGetLikesToThePost";
+    private static string wallDeletePostMethod = "api.methods.wallDeletePost";
+    private static string photosGetWallUploadServerMethod = "api.methods.photosGetWallUploadServer";
+    private static string photosSaveWallPhotoMethod = "api.methods.photosSaveWallPhoto";
     
     public static int WallPost(string postMessage, string token)
     {
@@ -51,7 +52,7 @@ public static class VkApiUtil
 
         var paramsContent = new FormUrlEncodedContent(parameters);
 
-        var request = new RestRequest(baseUrl, wallCreateCommentMethod);
+        var request = new RestRequest(baseUrl, "/");
         request.AddContent(paramsContent);
         RestClient.Post(request);
     }

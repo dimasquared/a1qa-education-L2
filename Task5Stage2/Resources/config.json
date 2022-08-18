@@ -2,15 +2,6 @@
   "url": "https://vk.com/",
   "api": {
     "baseUrl": "https://api.vk.com/method/",
-    "methods": {
-      "wallPost": "wall.post",
-      "wallCreateComment": "wall.createComment",
-      "wallEditPost": "wall.edit",
-      "wallGetLikesToThePost": "wall.getLikes",
-      "wallDeletePost": "wall.delete",
-      "photosGetWallUploadServer": "photos.getWallUploadServer",
-      "photosSaveWallPhoto": "photos.saveWallPhoto"
-    },
     "version": "5.131"
   }
 }

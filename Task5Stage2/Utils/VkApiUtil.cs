@@ -12,13 +12,13 @@ public static class VkApiUtil
     private static string apiVersion = config.GetValue<string>("api.version");
     private static string baseUrl = config.GetValue<string>("api.baseUrl");
     
-    private static string wallPostMethod = "wall.post";
-    private static string wallCreateCommentMethod = "api.methods.wallCreateComment";
-    private static string wallEditPostMethod = "api.methods.wallEditPost";
-    private static string wallGetLikesToThePostMethod = "api.methods.wallGetLikesToThePost";
-    private static string wallDeletePostMethod = "api.methods.wallDeletePost";
-    private static string photosGetWallUploadServerMethod = "api.methods.photosGetWallUploadServer";
-    private static string photosSaveWallPhotoMethod = "api.methods.photosSaveWallPhoto";
+    private const string wallPostMethod = "wall.post";
+    private const string wallCreateCommentMethod = "api.methods.wallCreateComment";
+    private const string wallEditPostMethod = "api.methods.wallEditPost";
+    private const string wallGetLikesToThePostMethod = "api.methods.wallGetLikesToThePost";
+    private const string wallDeletePostMethod = "api.methods.wallDeletePost";
+    private const string photosGetWallUploadServerMethod = "api.methods.photosGetWallUploadServer";
+    private const string photosSaveWallPhotoMethod = "api.methods.photosSaveWallPhoto";
     
     public static int WallPost(string postMessage, string token)
     {
@@ -52,7 +52,7 @@ public static class VkApiUtil
 
         var paramsContent = new FormUrlEncodedContent(parameters);
 
-        var request = new RestRequest(baseUrl, "/");
+        var request = new RestRequest(baseUrl, wallCreateCommentMethod);
         request.AddContent(paramsContent);
         RestClient.Post(request);
     }

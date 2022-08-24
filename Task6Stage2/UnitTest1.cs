@@ -1,3 +1,6 @@
+using NUnit.Framework.Interfaces;
+using Task6Stage2.DataBase;
+using Task6Stage2.DataBase.Models;
 using Task6Stage2.Models;
 using Task6Stage2.RestApiFramework;
 using Task6Stage2.RestApiFramework.Utils;
@@ -15,7 +18,8 @@ public class Tests
     private int userIndexForCheck;
     private int postIndexForCheck;
     private int postIncorrectIndexForCheck;
-    
+    private DateTime testStartTime;
+
     [SetUp]
     public void Setup()
     {
@@ -23,7 +27,7 @@ public class Tests
         baseUrl = jConfig.GetValue<string>("baseUrl");
         postsUrl = jConfig.GetValue<string>("postsUrl");
         usersUrl = jConfig.GetValue<string>("usersUrl");
-        
+
         JsonSettingsFileUtil jTestData = new JsonSettingsFileUtil(@"\Resources\testData.json");
         postDataById = jTestData.GetValue<PostData>("postDataById");
         sendPostData = jTestData.GetValue<PostData>("sendPostData");
@@ -31,9 +35,12 @@ public class Tests
         userIndexForCheck = jTestData.GetValue<int>("userIndexForCheck");
         postIndexForCheck = jTestData.GetValue<int>("postIndexForCheck");
         postIncorrectIndexForCheck = jTestData.GetValue<int>("postIncorrectIndexForCheck");
+
+        testStartTime = DateTime.Now;
     }
 
     [Test, Order(1)]
+    [Author("Harry Potter", "potter@hogwarts.net")]
     public void SendGetRequestToGetAllPosts()
     {
         RestRequest request = new RestRequest(baseUrl, postsUrl);
@@ -46,6 +53,7 @@ public class Tests
     }
 
     [Test, Order(2)]
+    [Author("Harry Potter", "potter@hogwarts.net")]
     public void SendGetRequestToGetPostWithId()
     {
         RestRequest request = new RestRequest(baseUrl, postsUrl + $"//{postIndexForCheck}");
@@ -60,6 +68,7 @@ public class Tests
     }
 
     [Test, Order(3)]
+    [Author("Harry Potter", "potter@hogwarts.net")]
     public void SendGetRequestToGetPostWithIncorrectId()
     {
         RestRequest request = new RestRequest(baseUrl, postsUrl + $"//{postIncorrectIndexForCheck}");
@@ -69,6 +78,7 @@ public class Tests
     }
 
     [Test, Order(4)]
+    [Author("Harry Potter", "potter@hogwarts.net")]
     public void SendPostRequestToCreatePost()
     {
         RestRequest request = new RestRequest(baseUrl, postsUrl);
@@ -82,19 +92,21 @@ public class Tests
     }
 
     [Test, Order(5)]
+    [Author("Harry Potter", "potter@hogwarts.net")]
     public void SendGetRequestToGetUsers()
     {
-        RestRequest request = new RestRequest(baseUrl,usersUrl);
+        RestRequest request = new RestRequest(baseUrl, usersUrl);
         RestResponse response = RestClient.Get(request);
         Assert.AreEqual(200, response.StatusCode, "Status code is not 200");
         Assert.IsTrue(response.IsJson(), "The list in response body is not json");
 
         var users = response.Deserialize<UsersData[]>();
-        var userId = users[userIndexForCheck-1];
+        var userId = users[userIndexForCheck - 1];
         Assert.AreEqual(validUserData, userId, $"User (id={userIndexForCheck}) data does not equal to required data");
     }
 
     [Test, Order(6)]
+    [Author("Harry Potter", "potter@hogwarts.net")]
     public void SendGetRequestToGetUserWithIdN()
     {
         RestRequest request = new RestRequest(baseUrl, usersUrl + $"//{userIndexForCheck}");
@@ -103,5 +115,53 @@ public class Tests
 
         var user = response.Deserialize<UsersData>();
         Assert.AreEqual(validUserData, user, "User data does not equal to required data");
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        var testName = TestContext.CurrentContext.Test.Name;
+        var methodName = TestContext.CurrentContext.Test.MethodName;
+        var environment = Environment.MachineName;
+        var testEndTime = DateTime.Now;
+        var testAuthor = (string) TestContext.CurrentContext.Test.Properties.Get("Author");
+        var openAngelBracket = testAuthor.IndexOf('<');
+        var testAuthorName = testAuthor.Substring(0, openAngelBracket-1);
+        var testAuthorEmail = testAuthor.Substring(openAngelBracket+1, testAuthor.Length-openAngelBracket-2);
+        
+        var testResultStatus = TestContext.CurrentContext.Result.Outcome.Status;
+        TestResultStatusEnum status;
+        
+        switch (testResultStatus)
+        {
+            case TestStatus.Inconclusive:
+                status = TestResultStatusEnum.FAILED;
+                break;
+            case TestStatus.Skipped:
+                status = TestResultStatusEnum.SKIPPED;
+                break;
+            case TestStatus.Passed:
+                status = TestResultStatusEnum.PASSED;
+                break;
+            case TestStatus.Warning:
+                status = TestResultStatusEnum.FAILED;
+                break;
+            case TestStatus.Failed:
+                status = TestResultStatusEnum.FAILED;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        Session session = new Session
+        {
+            session_key = testStartTime.ToString(),
+            created_time = testStartTime,
+            build_number = 1
+        };
+        
+        DbCrud.TestAdd(testName, methodName, session, testStartTime, testEndTime, status, environment, testAuthorName, testAuthorEmail);
+        
+        //ToDo: check if info was added to db
     }
 }

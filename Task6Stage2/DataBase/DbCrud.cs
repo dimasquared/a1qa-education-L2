@@ -5,12 +5,13 @@ namespace Task6Stage2.DataBase;
 
 public class DbCrud : DbContext
 {
-    public static void TestAdd(string testName, string methodName, Session session, DateTime testStartTime,
-        DateTime testEndTime, TestResultStatusEnum status, string environment, string testAuthorName, string testAuthorEmail)
+    public static Test TestAdd(string projectName, string testName, string methodName, Session session, DateTime testStartTime,
+        DateTime testEndTime, TestResultStatusEnum status, string environment, string testAuthorName,
+        string testAuthorEmail)
     {
         using (TestDbContext db = new TestDbContext())
         {
-            var project = GetProject(db);
+            var project = GetProject(projectName,db);
             var author = GetAuthor(db, testAuthorName, testAuthorEmail);
 
             db.Session.Add(session);
@@ -32,30 +33,28 @@ public class DbCrud : DbContext
 
             db.Test.Add(test1);
             db.SaveChanges();
+            return db.Test.Find(test1.id);
         }
     }
 
-    public static void TestCheckAdding()
+    private static Project GetProject(string projectName, TestDbContext db)
     {
-    }
-
-    private static Project GetProject(TestDbContext db)
-    {
-        var project = db.Project.ToList().FirstOrDefault(project => project.name == "Rest API");
+        var project = db.Project.ToList().FirstOrDefault(project => project.name == projectName);
 
         if (project == null)
         {
-            project = new Project { name = "Rest API" };
+            project = new Project { name = projectName };
             db.Project.Add(project);
             db.SaveChanges();
         }
 
         return project;
     }
-    
+
     private static Author GetAuthor(TestDbContext db, string testAuthorName, string testAuthorEmail)
     {
-        var author = db.Author.ToList().FirstOrDefault(author => author.name == testAuthorName && author.email == testAuthorEmail);
+        var author = db.Author.ToList()
+            .FirstOrDefault(author => author.name == testAuthorName && author.email == testAuthorEmail);
 
         if (author == null)
         {

@@ -19,6 +19,7 @@ public class Tests
     private int postIndexForCheck;
     private int postIncorrectIndexForCheck;
     private DateTime testStartTime;
+    private string projectName;
 
     [SetUp]
     public void Setup()
@@ -35,6 +36,7 @@ public class Tests
         userIndexForCheck = jTestData.GetValue<int>("userIndexForCheck");
         postIndexForCheck = jTestData.GetValue<int>("postIndexForCheck");
         postIncorrectIndexForCheck = jTestData.GetValue<int>("postIncorrectIndexForCheck");
+        projectName = jTestData.GetValue<string>("projectName");
 
         testStartTime = DateTime.Now;
     }
@@ -124,14 +126,14 @@ public class Tests
         var methodName = TestContext.CurrentContext.Test.MethodName;
         var environment = Environment.MachineName;
         var testEndTime = DateTime.Now;
-        var testAuthor = (string) TestContext.CurrentContext.Test.Properties.Get("Author");
+        var testAuthor = (string)TestContext.CurrentContext.Test.Properties.Get("Author");
         var openAngelBracket = testAuthor.IndexOf('<');
-        var testAuthorName = testAuthor.Substring(0, openAngelBracket-1);
-        var testAuthorEmail = testAuthor.Substring(openAngelBracket+1, testAuthor.Length-openAngelBracket-2);
-        
+        var testAuthorName = testAuthor.Substring(0, openAngelBracket - 1);
+        var testAuthorEmail = testAuthor.Substring(openAngelBracket + 1, testAuthor.Length - openAngelBracket - 2);
+
         var testResultStatus = TestContext.CurrentContext.Result.Outcome.Status;
         TestResultStatusEnum status;
-        
+
         switch (testResultStatus)
         {
             case TestStatus.Inconclusive:
@@ -159,9 +161,9 @@ public class Tests
             created_time = testStartTime,
             build_number = 1
         };
-        
-        DbCrud.TestAdd(testName, methodName, session, testStartTime, testEndTime, status, environment, testAuthorName, testAuthorEmail);
-        
-        //ToDo: check if info was added to db
+
+        var addedDbEntity = DbCrud.TestAdd(projectName, testName, methodName, session, testStartTime, testEndTime, status,
+            environment, testAuthorName, testAuthorEmail);
+        Assert.IsTrue(addedDbEntity.name == testName && addedDbEntity.start_time == testStartTime, "Information does not added");
     }
 }

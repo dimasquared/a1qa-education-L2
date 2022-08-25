@@ -4,6 +4,7 @@ using Task6Stage2.DataBase.Models;
 using Task6Stage2.Models;
 using Task6Stage2.RestApiFramework;
 using Task6Stage2.RestApiFramework.Utils;
+using Task6Stage2.Utils;
 
 namespace Task6Stage2;
 
@@ -127,10 +128,8 @@ public class Tests
         var environment = Environment.MachineName;
         var testEndTime = DateTime.Now;
         var testAuthor = (string)TestContext.CurrentContext.Test.Properties.Get("Author");
-        var openAngelBracket = testAuthor.IndexOf('<');
-        var testAuthorName = testAuthor.Substring(0, openAngelBracket - 1);
-        var testAuthorEmail = testAuthor.Substring(openAngelBracket + 1, testAuthor.Length - openAngelBracket - 2);
-
+        var testAuthorData = GetTestAuthorDataUtil.GetAuthorData(testAuthor);
+        
         var testResultStatus = TestContext.CurrentContext.Result.Outcome.Status;
         TestResultStatusEnum status;
 
@@ -163,7 +162,7 @@ public class Tests
         };
 
         var addedDbEntity = DbCrud.TestAdd(projectName, testName, methodName, session, testStartTime, testEndTime, status,
-            environment, testAuthorName, testAuthorEmail);
+            environment, testAuthorData.name, testAuthorData.email);
         Assert.IsTrue(addedDbEntity.name == testName && addedDbEntity.start_time == testStartTime, "Information does not added");
     }
 }

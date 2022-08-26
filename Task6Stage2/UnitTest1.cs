@@ -1,4 +1,3 @@
-using NUnit.Framework.Interfaces;
 using Task6Stage2.DataBase;
 using Task6Stage2.DataBase.Models;
 using Task6Stage2.Models;
@@ -37,7 +36,7 @@ public class Tests
         userIndexForCheck = jTestData.GetValue<int>("userIndexForCheck");
         postIndexForCheck = jTestData.GetValue<int>("postIndexForCheck");
         postIncorrectIndexForCheck = jTestData.GetValue<int>("postIncorrectIndexForCheck");
-        projectName = jTestData.GetValue<string>("projectName");
+        projectName = jTestData.GetValue<string>("projectNameTC1");
 
         testStartTime = DateTime.Now;
     }
@@ -128,31 +127,10 @@ public class Tests
         var environment = Environment.MachineName;
         var testEndTime = DateTime.Now;
         var testAuthor = (string)TestContext.CurrentContext.Test.Properties.Get("Author");
-        var testAuthorData = GetTestAuthorDataUtil.GetAuthorData(testAuthor);
+        var testAuthorData = DataConverterUtils.GetTestAuthorData(testAuthor);
         
         var testResultStatus = TestContext.CurrentContext.Result.Outcome.Status;
-        TestResultStatusEnum status;
-
-        switch (testResultStatus)
-        {
-            case TestStatus.Inconclusive:
-                status = TestResultStatusEnum.FAILED;
-                break;
-            case TestStatus.Skipped:
-                status = TestResultStatusEnum.SKIPPED;
-                break;
-            case TestStatus.Passed:
-                status = TestResultStatusEnum.PASSED;
-                break;
-            case TestStatus.Warning:
-                status = TestResultStatusEnum.FAILED;
-                break;
-            case TestStatus.Failed:
-                status = TestResultStatusEnum.FAILED;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+        var status = DataConverterUtils.GetTestStatus(testResultStatus);
 
         Session session = new Session
         {
@@ -161,8 +139,8 @@ public class Tests
             build_number = 1
         };
 
-        var addedDbEntity = DbCrud.TestAdd(projectName, testName, methodName, session, testStartTime, testEndTime, status,
+        var addedDbEntry = DbCrud.TestAdd(projectName, testName, methodName, session, testStartTime, testEndTime, status,
             environment, testAuthorData.name, testAuthorData.email);
-        Assert.IsTrue(addedDbEntity.name == testName && addedDbEntity.start_time == testStartTime, "Information does not added");
+        Assert.IsTrue(addedDbEntry.name == testName && addedDbEntry.start_time == testStartTime, "Information does not added");
     }
 }

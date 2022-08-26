@@ -5,13 +5,13 @@ namespace Task6Stage2.DataBase;
 
 public class DbCrud : DbContext
 {
-    public static Test TestAdd(string projectName, string testName, string methodName, Session session, DateTime testStartTime,
-        DateTime testEndTime, TestResultStatusEnum status, string environment, string testAuthorName,
-        string testAuthorEmail)
+    public static Test TestAdd(string projectName, string testName, string methodName, Session session,
+        DateTime testStartTime, DateTime testEndTime, TestResultStatusEnum status, string environment,
+        string testAuthorName, string testAuthorEmail)
     {
         using (TestDbContext db = new TestDbContext())
         {
-            var project = GetProject(projectName,db);
+            var project = GetProject(projectName, db);
             var author = GetAuthor(db, testAuthorName, testAuthorEmail);
 
             db.Session.Add(session);
@@ -34,6 +34,64 @@ public class DbCrud : DbContext
             db.Test.Add(test1);
             db.SaveChanges();
             return db.Test.Find(test1.id);
+        }
+    }
+
+    public static Test TestCopy(int id, string projectName, string testAuthorName, string testAuthorEmail)
+    {
+        using (TestDbContext db = new TestDbContext())
+        {
+            var foundedEntry = db.Test.Find(id);
+            foundedEntry.id = 0;
+            db.Test.Add(foundedEntry);
+            db.SaveChanges();
+            var copiedEntry = db.Test.Find(foundedEntry.id);
+
+            var author = GetAuthor(db, testAuthorName, testAuthorEmail);
+            copiedEntry.author_id = author.id;
+
+            var project = GetProject(projectName, db);
+            copiedEntry.project_id = project.id;
+
+            db.SaveChanges();
+            return db.Test.Find(copiedEntry.id);
+        }
+    }
+
+    public static Test TestUpdate(Test dbEntry, string testName, string methodName, Session session,
+        DateTime testStartTime, DateTime testEndTime, TestResultStatusEnum status, string environment)
+    {
+        using (TestDbContext db = new TestDbContext())
+        {
+            var editingDbEntry = db.Test.Find(dbEntry.id);
+
+            db.Session.Add(session);
+            db.SaveChanges();
+
+            editingDbEntry.name = testName;
+            editingDbEntry.status_id = (int?)status;
+            editingDbEntry.method_name = methodName;
+            editingDbEntry.session_id = session.id;
+            editingDbEntry.start_time = testStartTime;
+            editingDbEntry.end_time = testEndTime;
+            editingDbEntry.env = environment;
+            editingDbEntry.browser = null;
+
+            db.SaveChanges();
+            return db.Test.Find(editingDbEntry.id);
+        }
+    }
+
+    public static bool TestDelete(Test testEntry)
+    {
+        using (TestDbContext db = new TestDbContext())
+        {
+            var deletingDbEntry = db.Test.Find(testEntry.id);
+
+            db.Test.Remove(deletingDbEntry);
+            db.SaveChanges();
+
+            return db.Test.Find(deletingDbEntry.id) == null;
         }
     }
 

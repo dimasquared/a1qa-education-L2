@@ -9,7 +9,7 @@ public static class GetRandomIdUtil
         List<int> testsId = new List<int>();
         List<int> chosenId = new List<int>();
         Random rnd = new Random();
-        var testsCount = rnd.Next(10);
+        var testsCount = rnd.Next(1, 10);
 
         using (TestDbContext db = new TestDbContext())
         {

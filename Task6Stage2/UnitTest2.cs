@@ -28,22 +28,20 @@ public class Test2
         {
             copiedEntries.Add(DbCrud.TestCopy(id, projectName, testAuthorName, testAuthorEmail));
         }
-
-        
     }
 
     [Test]
-    public void SimulateRunningTestsAndUpdateDbInformation()
+    public void SimulateRunningTests()
     {
         var testName = TestContext.CurrentContext.Test.Name;
         var methodName = TestContext.CurrentContext.Test.MethodName;
         var environment = Environment.MachineName;
         var testResultStatus = TestContext.CurrentContext.Result.Outcome.Status;
-        
+
         foreach (var testEntry in copiedEntries)
         {
             var testStartTime = DateTime.Now;
-            
+
             SimulateRunningTestUtil.SimulateRunningTest();
 
             var testEndTime = DateTime.Now;

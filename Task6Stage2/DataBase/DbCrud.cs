@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Task6Stage2.DataBase.Models;
+using Task6Stage2.Utils;
+using Test = Task6Stage2.DataBase.Models.Test;
 
 namespace Task6Stage2.DataBase;
 
@@ -33,7 +35,10 @@ public class DbCrud : DbContext
 
             db.Test.Add(test1);
             db.SaveChanges();
-            return db.Test.Find(test1.id);
+            
+            var addedEntry = db.Test.Find(test1.id);
+            Logger.GetInstance().Info($"Entity added to the database \n{addedEntry}");
+            return addedEntry;
         }
     }
 
@@ -42,9 +47,11 @@ public class DbCrud : DbContext
         using (TestDbContext db = new TestDbContext())
         {
             var foundedEntry = db.Test.Find(id);
+            Logger.GetInstance().Info($"Founded entity to copy \n{foundedEntry}");
             foundedEntry.id = 0;
             db.Test.Add(foundedEntry);
             db.SaveChanges();
+            
             var copiedEntry = db.Test.Find(foundedEntry.id);
 
             var author = GetAuthor(db, testAuthorName, testAuthorEmail);
@@ -54,7 +61,8 @@ public class DbCrud : DbContext
             copiedEntry.project_id = project.id;
 
             db.SaveChanges();
-            return db.Test.Find(copiedEntry.id);
+            Logger.GetInstance().Info($"Entity with the id {id} copied with an indication of the current project and the author \n{copiedEntry}");
+            return copiedEntry;
         }
     }
 
@@ -64,6 +72,7 @@ public class DbCrud : DbContext
         using (TestDbContext db = new TestDbContext())
         {
             var editingDbEntry = db.Test.Find(dbEntry.id);
+            Logger.GetInstance().Info($"Entity to update \n{editingDbEntry}");
 
             db.Session.Add(session);
             db.SaveChanges();
@@ -78,7 +87,9 @@ public class DbCrud : DbContext
             editingDbEntry.browser = null;
 
             db.SaveChanges();
-            return db.Test.Find(editingDbEntry.id);
+            
+            Logger.GetInstance().Info($"Entity updated \n{editingDbEntry}");
+            return editingDbEntry;
         }
     }
 
@@ -87,6 +98,7 @@ public class DbCrud : DbContext
         using (TestDbContext db = new TestDbContext())
         {
             var deletingDbEntry = db.Test.Find(testEntry.id);
+            Logger.GetInstance().Info($"Entity to delete \n{deletingDbEntry}");
 
             db.Test.Remove(deletingDbEntry);
             db.SaveChanges();

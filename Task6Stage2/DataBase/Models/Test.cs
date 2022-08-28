@@ -1,4 +1,6 @@
-﻿namespace Task6Stage2.DataBase.Models;
+﻿using Newtonsoft.Json;
+
+namespace Task6Stage2.DataBase.Models;
 
 public class Test
 {
@@ -13,4 +15,9 @@ public class Test
     public string env { get; set; }
     public string? browser { get; set; }
     public int? author_id { get; set; }
+    
+    public override string ToString()
+    {
+        return nameof(Test) + ":\n" + JsonConvert.SerializeObject(this);
+    }
 }

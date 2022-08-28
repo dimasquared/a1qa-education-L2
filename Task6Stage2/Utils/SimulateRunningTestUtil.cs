@@ -4,7 +4,6 @@ public static class SimulateRunningTestUtil
 {
     public static void SimulateRunningTest()
     {
-        Thread.Sleep(5000);
-        
+        Thread.Sleep(3000);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Task6Stage2.DataBase.Models;
+﻿using Newtonsoft.Json;
+
+namespace Task6Stage2.DataBase.Models;
 
 public class Session
 {
@@ -6,4 +8,9 @@ public class Session
     public string session_key { get; set; }
     public DateTime created_time { get; set; }
     public int build_number { get; set; }
+    
+    public override string ToString()
+    {
+        return nameof(Session) + ":\n" + JsonConvert.SerializeObject(this);
+    }
 }

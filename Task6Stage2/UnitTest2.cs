@@ -13,6 +13,7 @@ public class Test2
     private Test updatedDbEntry;
     private List<int> copiedEntriesId;
     private List<Test> copiedEntries = new();
+    private int buildNumber;
 
     [SetUp]
     public void Setup()
@@ -21,41 +22,49 @@ public class Test2
         projectName = jTestData.GetValue<string>("projectNameTC2");
         testAuthorName = jTestData.GetValue<string>("testAuthorName");
         testAuthorEmail = jTestData.GetValue<string>("testAuthorEmail");
+        buildNumber = jTestData.GetValue<int>("buildTC2");
 
         copiedEntriesId = GetRandomIdUtil.GetRandomId();
+        Logger.GetInstance().Info("Entries id to copy: " + string.Join(", ", copiedEntriesId));
 
+        var projectId = ProjectDb.GetProjectId(projectName);
+        var authorId = AuthorDb.GetAuthorId(testAuthorName, testAuthorEmail);
+        
         foreach (var id in copiedEntriesId)
         {
-            copiedEntries.Add(DbCrud.TestCopy(id, projectName, testAuthorName, testAuthorEmail));
+            var copiedEntry = TestsDb.Copy(id);
+            copiedEntry.project_id = projectId;
+            copiedEntry.author_id = authorId;
+            var updCopiedEntry = TestsDb.Update(copiedEntry);
+            copiedEntries.Add(updCopiedEntry);
         }
     }
 
     [Test]
     public void SimulateRunningTests()
     {
-        var testName = TestContext.CurrentContext.Test.Name;
-        var methodName = TestContext.CurrentContext.Test.MethodName;
-        var environment = Environment.MachineName;
-        var testResultStatus = TestContext.CurrentContext.Result.Outcome.Status;
-
         foreach (var testEntry in copiedEntries)
         {
             var testStartTime = DateTime.Now;
 
             SimulateRunningTestUtil.SimulateRunningTest();
+            Logger.GetInstance().Info($"Simulate running test {testEntry.id} done");
 
             var testEndTime = DateTime.Now;
+            var testResultStatus = TestContext.CurrentContext.Result.Outcome.Status;
             var status = DataConverterUtils.GetTestStatus(testResultStatus);
+            var testName = TestContext.CurrentContext.Test.Name;
 
-            Session session = new Session
-            {
-                session_key = testStartTime.ToString(),
-                created_time = testStartTime,
-                build_number = 11
-            };
+            testEntry.name = testName;
+            testEntry.status_id = (int?)status;
+            testEntry.method_name = TestContext.CurrentContext.Test.MethodName;
+            testEntry.session_id = SessionDb.AddSession(testStartTime, buildNumber).id;
+            testEntry.start_time = testStartTime;
+            testEntry.end_time = testEndTime;
+            testEntry.env = Environment.MachineName;
+            testEntry.browser = null;
 
-            updatedDbEntry = DbCrud.TestUpdate(testEntry, testName, methodName, session, testStartTime,
-                testEndTime, status, environment);
+            updatedDbEntry = TestsDb.Update(testEntry);
             Assert.IsTrue(updatedDbEntry.name == testName && updatedDbEntry.start_time == testStartTime,
                 "Information does not updated");
         }
@@ -66,7 +75,7 @@ public class Test2
     {
         foreach (var testEntry in copiedEntries)
         {
-            Assert.IsTrue(DbCrud.TestDelete(testEntry));
+            Assert.IsTrue(TestsDb.Delete(testEntry));
         }
     }
 }

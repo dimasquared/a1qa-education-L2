@@ -1,5 +1,10 @@
 ﻿{
   "baseUrl": "https://jsonplaceholder.typicode.com",
   "postsUrl": "/posts",
-  "usersUrl": "/users"
+  "usersUrl": "/users",
+  
+  "server": "localhost",
+  "user": "root",
+  "password": "root",
+  "database": "union_reporting"
 }

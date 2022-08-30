@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Task6Stage2.DataBase.Models;
+using Task6Stage2.DataBase.Utils;
 
 namespace Task6Stage2.DataBase;
 
@@ -17,9 +18,6 @@ public class TestDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseMySql(
-            "server=localhost;user=root;password=root;database=union_reporting;",
-            new MySqlServerVersion(new Version(8, 0, 30))
-        );
+        optionsBuilder.UseMySql(DbConfigUtil.GetConnectionString(), new MySqlServerVersion(new Version(8, 0, 30)));
     }
 }

@@ -40,7 +40,9 @@
   },
   
   "projectNameTC1": "Rest API",
+  "buildTC1": 1,
   "projectNameTC2": "Test DB CRUD",
+  "buildTC2": 11,
   "testAuthorName": "Draco Lucius Malfoy",
   "testAuthorEmail": "d_malfoy@hogwarts.net"
 }

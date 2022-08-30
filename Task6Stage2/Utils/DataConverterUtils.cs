@@ -36,6 +36,7 @@ public static class DataConverterUtils
             default:
                 throw new ArgumentOutOfRangeException();
         }
+
         return status;
     }
 }

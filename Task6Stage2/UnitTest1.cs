@@ -20,6 +20,7 @@ public class Tests
     private int postIncorrectIndexForCheck;
     private DateTime testStartTime;
     private string projectName;
+    private int buildNumber;
 
     [SetUp]
     public void Setup()
@@ -37,7 +38,8 @@ public class Tests
         postIndexForCheck = jTestData.GetValue<int>("postIndexForCheck");
         postIncorrectIndexForCheck = jTestData.GetValue<int>("postIncorrectIndexForCheck");
         projectName = jTestData.GetValue<string>("projectNameTC1");
-
+        buildNumber = jTestData.GetValue<int>("buildTC1");
+        
         testStartTime = DateTime.Now;
     }
 
@@ -123,24 +125,26 @@ public class Tests
     public void TearDown()
     {
         var testName = TestContext.CurrentContext.Test.Name;
-        var methodName = TestContext.CurrentContext.Test.MethodName;
-        var environment = Environment.MachineName;
-        var testEndTime = DateTime.Now;
         var testAuthor = (string)TestContext.CurrentContext.Test.Properties.Get("Author");
         var testAuthorData = DataConverterUtils.GetTestAuthorData(testAuthor);
         
         var testResultStatus = TestContext.CurrentContext.Result.Outcome.Status;
         var status = DataConverterUtils.GetTestStatus(testResultStatus);
 
-        Session session = new Session
+        Test addingDbEntry = new Test
         {
-            session_key = testStartTime.ToString(),
-            created_time = testStartTime,
-            build_number = 1
+            name = testName,
+            status_id = (int?)status,
+            method_name = TestContext.CurrentContext.Test.MethodName,
+            project_id = ProjectDb.GetProjectId(projectName),
+            session_id = SessionDb.AddSession(testStartTime, buildNumber).id,
+            start_time = testStartTime,
+            end_time = DateTime.Now,
+            env = Environment.MachineName,
+            author_id = AuthorDb.GetAuthorId(testAuthorData.name, testAuthorData.email)
         };
-
-        var addedDbEntry = DbCrud.TestAdd(projectName, testName, methodName, session, testStartTime, testEndTime, status,
-            environment, testAuthorData.name, testAuthorData.email);
+        
+        var addedDbEntry = TestsDb.Add(addingDbEntry);
         Assert.IsTrue(addedDbEntry.name == testName && addedDbEntry.start_time == testStartTime, "Information does not added");
     }
 }
